@@ -61,7 +61,7 @@ const BuyModal = (props: BuyModalProps) => {
 								size="base"
 								color="primary"
 								className="w-40"
-								onClick={() => 0}
+								onClickHandler={() => 0}
 							>
 								Claim
 							</Button>

@@ -1,9 +1,12 @@
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
+import { useNear } from '../contexts/near'
 import Button from './Button'
 import IconSearch from './icons/IconSearch'
 
 const NavbarTop = () => {
+	const { near, wallet, signIn } = useNear()
+	const accountId = wallet?.getAccountId() || null
 	const router = useRouter()
 	return (
 		<div
@@ -26,9 +29,25 @@ const NavbarTop = () => {
 					/>
 				</div>
 			)}
-			<Button color="primary" size="lg">
-				Connect Wallet
-			</Button>
+			<div className="flex">
+				<div className="my-auto mx-1 font-semibold">{accountId}</div>
+				{accountId ? (
+					<Button
+						onClickHandler={() => {
+							wallet?.signOut()
+							location.replace('/')
+						}}
+						color="primary"
+						size="lg"
+					>
+						Sign Out
+					</Button>
+				) : (
+					<Button onClickHandler={signIn} color="primary" size="lg">
+						Connect Wallet
+					</Button>
+				)}
+			</div>
 		</div>
 	)
 }

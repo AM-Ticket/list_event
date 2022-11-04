@@ -25,7 +25,7 @@ const Overview = () => {
 					color="primary"
 					size="lg"
 					className="px-20 py-4"
-					onClick={() => setShowBuyModal(true)}
+					onClickHandler={() => setShowBuyModal(true)}
 				>
 					Buy
 				</Button>

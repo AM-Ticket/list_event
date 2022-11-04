@@ -61,7 +61,12 @@ const EventItem = () => {
 						</div>
 					</div>
 					<div>
-						<Button rounded="xl" size="lg" color="primary">
+						<Button
+							onClickHandler={() => 0}
+							rounded="xl"
+							size="lg"
+							color="primary"
+						>
 							Buy
 						</Button>
 					</div>
