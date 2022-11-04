@@ -1,7 +1,11 @@
+import { useNear } from '../../contexts/near'
 import Button from '../Button'
 import IconSearch from '../icons/IconSearch'
 
 const NavbarTop = () => {
+	const { near, wallet, signIn } = useNear()
+	const accountId = wallet?.getAccountId() || null
+
 	return (
 		<div className="lg:flex justify-between items-center px-5 mb-6 hidden">
 			<div className="relative">
@@ -16,9 +20,25 @@ const NavbarTop = () => {
 					size={20}
 				/>
 			</div>
-			<Button color="primary" size="lg">
-				Connect Wallet
-			</Button>
+			<div className="flex">
+				<div className="my-auto mx-1 font-semibold">{accountId}</div>
+				{accountId ? (
+					<Button
+						onClickHandler={() => {
+							wallet?.signOut()
+							location.replace('/')
+						}}
+						color="primary"
+						size="lg"
+					>
+						Sign Out
+					</Button>
+				) : (
+					<Button onClickHandler={signIn} color="primary" size="lg">
+						Connect Wallet
+					</Button>
+				)}
+			</div>
 		</div>
 	)
 }

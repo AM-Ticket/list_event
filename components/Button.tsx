@@ -1,3 +1,4 @@
+// @ts-nocheck
 import clsx from 'clsx'
 
 interface ButtonProps {
@@ -6,6 +7,7 @@ interface ButtonProps {
 	rounded?: 'sm' | 'lg' | 'xl'
 	size?: 'sm' | 'base' | 'lg'
 	className?: string
+	onClickHandler?: Function
 }
 
 const Button = (props: ButtonProps) => {
@@ -28,6 +30,7 @@ const Button = (props: ButtonProps) => {
 
 	return (
 		<button
+			onClick={props.onClickHandler}
 			className={clsx(
 				props.className,
 				`flex items-center justify-center transition font-semibold`,
