@@ -11,12 +11,12 @@ module.exports = {
 				base: '#F5F5FB',
 				textDark: '#393939',
 				textLight: `#969BAB`,
-				border: `#C4C4C6`
+				border: `#C4C4C6`,
 			},
 		},
 		fontFamily: {
 			sans: ['Poppins', 'sans-serif'],
-		}
+		},
 	},
 	plugins: [],
 }

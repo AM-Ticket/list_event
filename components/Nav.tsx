@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import IconPublications from './icons/IconPublications'
 import IconFaq from './icons/IconFaq'
 import { Router, useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import IconBurger from './icons/IconBurger'
 import IconSearch from './icons/IconSearch'
 import Button from './Button'
@@ -59,6 +59,15 @@ const NavSection = ({
 				<div
 					className={clsx(
 						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
+						currTab.includes('create-an-event') && `border-l-4 border-primary`
+					)}
+					onClick={() => handleClickTab(`create-an-event`)}
+				>
+					<p>Create an event</p>
+				</div>
+				<div
+					className={clsx(
+						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
 						currTab.includes('publications') && `border-l-4 border-primary`
 					)}
 					onClick={() => handleClickTab(`publications`)}
@@ -82,8 +91,16 @@ const NavSection = ({
 }
 
 const Nav = () => {
-	const { near, wallet, signIn } = useNear()
+	const { generateAuthToken, authToken, wallet, signIn } = useNear()
 	const accountId = (wallet?.isSignedIn() && wallet?.getAccountId()) || null
+	useEffect(() => {
+		const run = async () => {
+			if (accountId && !authToken) {
+				await generateAuthToken()
+			}
+		}
+		run().catch(console.error)
+	}, [accountId])
 	const [showNavbarMobile, setShowNavbarMobile] = useState<boolean>(false)
 	return (
 		<>
