@@ -1,0 +1,1 @@
+export const IMG_BFT_URL = "https://res.cloudinary.com/dbcmvymir/image/upload/v1667549731/kiyte1x0zfgkfyecgb3s.png"
