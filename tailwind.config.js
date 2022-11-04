@@ -22,7 +22,7 @@ module.exports = {
 		},
 		fontFamily: {
 			sans: ['Poppins', 'sans-serif'],
-		}
+		},
 	},
 	plugins: [require('@tailwindcss/line-clamp')],
 }
