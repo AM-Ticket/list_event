@@ -1,12 +1,15 @@
+// @ts-nocheck
 import IconEvents from '../components/icons/IconEvents'
 import clsx from 'clsx'
 import IconPublications from './icons/IconPublications'
 import IconFaq from './icons/IconFaq'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { Router, useRouter } from 'next/router'
+import { useState } from 'react'
 import IconBurger from './icons/IconBurger'
 import IconSearch from './icons/IconSearch'
 import Button from './Button'
+import dynamic from 'next/dynamic'
+import { useNear } from '../contexts/near'
 
 const NavSection = ({
 	screen = 'mobile',
@@ -79,6 +82,8 @@ const NavSection = ({
 }
 
 const Nav = () => {
+	const { near, wallet, signIn } = useNear()
+	const accountId = (wallet?.isSignedIn() && wallet?.getAccountId()) || null
 	const [showNavbarMobile, setShowNavbarMobile] = useState<boolean>(false)
 	return (
 		<>
@@ -104,10 +109,24 @@ const Nav = () => {
 						/>
 					</div>
 				</div>
-				<div>
-					<Button color="primary" size="sm">
-						Connect Wallet
-					</Button>
+				<div className="flex">
+					<div className="my-auto mx-1 font-semibold">{accountId}</div>
+					{accountId ? (
+						<Button
+							onClickHandler={() => {
+								wallet?.signOut()
+								location.replace('/')
+							}}
+							color="primary"
+							size="sm"
+						>
+							Sign Out
+						</Button>
+					) : (
+						<Button onClickHandler={signIn} color="primary" size="sm">
+							Connect Wallet
+						</Button>
+					)}
 				</div>
 			</div>
 			{showNavbarMobile && (
