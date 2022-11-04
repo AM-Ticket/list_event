@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import IconBurger from './icons/IconBurger'
 import IconSearch from './icons/IconSearch'
 import Button from './Button'
+import IconX from './icons/IconX'
 
 const NavSection = ({
 	screen = 'mobile',
@@ -33,7 +34,7 @@ const NavSection = ({
 					className="font-bold text-xl cursor-pointer absolute top-4 right-4"
 					onClick={onClose}
 				>
-					X
+					<IconX size={18} color="#393939" />
 				</div>
 			)}
 			<div className="flex items-center mb-8 px-5">
@@ -105,7 +106,7 @@ const Nav = () => {
 					</div>
 				</div>
 				<div>
-					<Button color="primary" size="sm">
+					<Button color="primary" size="sm" onClick={() => 0}>
 						Connect Wallet
 					</Button>
 				</div>

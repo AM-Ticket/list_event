@@ -6,6 +6,8 @@ interface ButtonProps {
 	rounded?: 'sm' | 'lg' | 'xl'
 	size?: 'sm' | 'base' | 'lg'
 	className?: string
+	onClick: () => void
+	isFullWidth?: boolean
 }
 
 const Button = (props: ButtonProps) => {
@@ -32,9 +34,11 @@ const Button = (props: ButtonProps) => {
 				props.className,
 				`flex items-center justify-center transition font-semibold`,
 				`rounded-${rounded}`,
+				props.isFullWidth && `w-full`,
 				getColor(),
 				getSize()
 			)}
+			onClick={props.onClick}
 		>
 			{props.children}
 		</button>
