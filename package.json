@@ -9,13 +9,16 @@
     "lint": "eslint ./ --ext js,jsx,ts,tsx"
   },
   "dependencies": {
+    "@tailwindcss/line-clamp": "^0.4.2",
     "clsx": "^1.2.1",
+    "google-map-react": "^2.2.0",
     "near-api-js": "^1.1.0",
     "next": "13.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@types/google-map-react": "^2.1.7",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",

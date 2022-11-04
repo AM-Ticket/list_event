@@ -8,6 +8,7 @@ interface ButtonProps {
 	size?: 'sm' | 'base' | 'lg'
 	className?: string
 	onClickHandler?: Function
+	isFullWidth?: boolean
 }
 
 const Button = (props: ButtonProps) => {
@@ -35,9 +36,11 @@ const Button = (props: ButtonProps) => {
 				props.className,
 				`flex items-center justify-center transition font-semibold`,
 				`rounded-${rounded}`,
+				props.isFullWidth && `w-full`,
 				getColor(),
 				getSize()
 			)}
+			onClick={props.onClick}
 		>
 			{props.children}
 		</button>
