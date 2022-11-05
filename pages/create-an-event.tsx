@@ -1,6 +1,5 @@
 // @ts-nocheck
 import Nav from '../components/Nav'
-import Top from '../components/Events/Top'
 import Input from '../components/common/Input'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -21,25 +20,23 @@ const createAnEvent = () => {
 	const [nftImage, setNftImage] = useState(null)
 	const [nftCopies, setNftCopies] = useState(null)
 
-	const { authToken, generateAuthToken } = useNear()
+	const { generateAuthToken } = useNear()
 	const { upload } = CloudinaryService()
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 
-		// upload
-		await generateAuthToken()
-		// const formdataThumbnail = new FormData()
-		// formdataThumbnail.append('file', thumbnail)
-		// formdataThumbnail.append('upload_preset', 'event_am_ticket')
-		// const resThumbnailUrl = await upload(formdataThumbnail)
+		const authToken = await generateAuthToken()
 
-		// const formdataNft = new FormData()
-		// formdataNft.append('file', nftImage)
-		// formdataNft.append('upload_preset', 'event_am_ticket')
-		// const resNftUrl = await upload(formdataNft)
-		const resThumbnailUrl = 'https://google.com'
-		const resNftUrl = 'https://google.com'
+		const formdataThumbnail = new FormData()
+		formdataThumbnail.append('file', thumbnail)
+		formdataThumbnail.append('upload_preset', 'event_am_ticket')
+		const resThumbnailUrl = await upload(formdataThumbnail)
+
+		const formdataNft = new FormData()
+		formdataNft.append('file', nftImage)
+		formdataNft.append('upload_preset', 'event_am_ticket')
+		const resNftUrl = await upload(formdataNft)
 
 		const res = await fetch('/api/events', {
 			method: 'POST',
@@ -66,7 +63,6 @@ const createAnEvent = () => {
 			<Nav />
 			<div className="w-[320px] min-h-screen hidden lg:block" />
 			<div className="flex flex-col flex-1 p-2 lg:p-6 pt-20">
-				<Top />
 				<div className="flex flex-col w-6/12 space-y-6">
 					<div className="rounded-xl shadow-xl bg-white p-4 flex">
 						<div>
