@@ -3,9 +3,8 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useNear } from '../contexts/near'
 import Button from './Button'
-import IconCheck from './icons/IconCheck'
-import IconChevronDown from './icons/IconChevronDown'
-import IconChevronUp from './icons/IconChevronUp'
+import IconChevronDown from './icons/IconDown'
+import IconChevronUp from './icons/IconUp'
 import IconSearch from './icons/IconSearch'
 
 const NavbarTop = () => {

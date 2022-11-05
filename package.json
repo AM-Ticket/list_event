@@ -9,21 +9,21 @@
     "lint": "eslint ./ --ext js,jsx,ts,tsx"
   },
   "dependencies": {
+    "@tailwindcss/line-clamp": "^0.4.2",
     "axios": "^1.1.3",
     "bs58": "^5.0.0",
     "cloudinary": "^1.32.0",
     "clsx": "^1.2.1",
+    "google-map-react": "^2.2.0",
     "js-base64": "^3.7.2",
     "js-sha256": "^0.9.0",
     "mongoose": "^6.7.1",
-    "@tailwindcss/line-clamp": "^0.4.2",
-    "clsx": "^1.2.1",
-    "google-map-react": "^2.2.0",
     "near-api-js": "^1.1.0",
     "next": "13.0.1",
     "react": "18.2.0",
     "react-datepicker": "^4.8.0",
     "react-dom": "18.2.0",
+    "react-qr-code": "^2.0.8",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
