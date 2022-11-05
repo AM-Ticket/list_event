@@ -23,7 +23,7 @@ const EventItem = (props: EventItemProps) => {
 		<div className="rounded-xl shadow-xl bg-white flex w-8/12 mx-5">
 			<LeftSide />
 			<div className="flex flex-1 p-6 space-x-4 min-h-[320px]">
-				<NFTImage size="base" image={props.data.nft_image} />
+				<NFTImage data={props.data} size="base" image={props.data.nft_image} />
 				<div className="p-2 flex flex-col justify-between">
 					<div>
 						<p className="font-extrabold text-3xl text-textDark mb-2">
