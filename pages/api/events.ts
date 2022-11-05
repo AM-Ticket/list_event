@@ -34,6 +34,7 @@ export default async function events(
 				nft_image: req.body.nft_image,
 				num_of_guests: req.body.num_of_guests,
 				subaccount: req.body.subaccount,
+				minting_price: req.body.minting_price,
 			})
 			await doc.validateSync()
 			await doc.save()
