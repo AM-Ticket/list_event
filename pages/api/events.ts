@@ -22,8 +22,7 @@ export default async function events(
 		}
 	} else if (req.method === 'POST') {
 		try {
-			console.log(req.headers)
-			await authSignature(req.headers.authorization)
+			const accountId = await authSignature(req.headers.authorization)
 			const doc = new FormModel({
 				title: req.body.title,
 				organizer_name: req.body.organizer_name,
@@ -35,6 +34,7 @@ export default async function events(
 				num_of_guests: req.body.num_of_guests,
 				subaccount: req.body.subaccount,
 				minting_price: req.body.minting_price,
+				owner_id: accountId,
 			})
 			await doc.validateSync()
 			await doc.save()

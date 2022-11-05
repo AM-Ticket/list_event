@@ -18,4 +18,5 @@ export const formModelSchema = new Schema<IFormSchema>({
 	num_of_guests: Number,
 	subaccount: String,
 	minting_price: Number,
+	owner_id: String,
 })
