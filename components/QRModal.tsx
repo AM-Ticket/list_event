@@ -4,6 +4,8 @@ import QRCode from 'react-qr-code'
 
 interface QRModalProps {
 	isShow: boolean
+	value: string
+	title: string
 	onClose: () => void
 }
 
@@ -17,13 +19,15 @@ const QRModal = (props: QRModalProps) => {
 				>
 					<IconX size={20} color="#393939" />
 				</div>
-				<p className="font-extrabold text-2xl text-textDark mb-10">Tiket #1</p>
+				<p className="font-extrabold text-2xl text-textDark mb-10">
+					{props.title}
+				</p>
 				<div className="flex items-center justify-center">
 					<div className="max-w-[250px] w-full">
 						<QRCode
 							size={250}
 							style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-							value={'https://paras.id'}
+							value={props.value}
 							viewBox={`0 0 256 256`}
 						/>
 					</div>
