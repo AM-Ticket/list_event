@@ -6,6 +6,7 @@ import QRModal from './QRModal'
 
 export default function TicketModal(props) {
 	const [showQR, setShowQR] = useState<boolean>(false)
+	console.log(props.redeemed)
 
 	return (
 		<div className="flex items-center justify-center">
@@ -19,17 +20,23 @@ export default function TicketModal(props) {
 						<p className="text-sm text-textDark">View Details</p>
 					</div>
 					<div>
-						<Button
-							color="black"
-							size="base"
-							onClickHandler={() => setShowQR(true)}
-						>
-							View QR COde
-						</Button>
+						{!props.redeemed ? (
+							<Button
+								color="black"
+								size="base"
+								onClickHandler={() => setShowQR(true)}
+							>
+								View QR COde
+							</Button>
+						) : (
+							<div>Redemeed</div>
+						)}
 					</div>
 				</div>
 			</div>
 			<QRModal
+				tokenId={props.tokenId}
+				contractId={props.contractId}
 				value={props.url}
 				isShow={showQR}
 				title={props.children}

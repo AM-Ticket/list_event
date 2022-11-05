@@ -11,3 +11,10 @@ export interface IFormSchema {
 	minting_price?: number
 	owner_id?: string
 }
+
+export interface IPendingTicketSchema {
+	token_id: string
+	contract_id: string
+	issued_at: string
+	status: 'open' | 'redeemed'
+}
