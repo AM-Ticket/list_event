@@ -71,6 +71,7 @@ const createAnEvent = () => {
 				nft_image: resNftUrl.url,
 				subaccount: `${subAccountName}.${process.env.NEXT_PUBLIC_CONTRACT_NAME}`,
 				num_of_guests: nftCopies,
+				minting_price: mintingPrice,
 			}),
 		})
 
