@@ -7,15 +7,28 @@ import Button from './Button'
 import { useRouter } from 'next/router'
 import { useNear } from '../contexts/near'
 import IconCheck from './icons/IconCheck'
+import clsx from 'clsx'
+import { utils } from 'near-api-js'
+import { IFormSchema } from '../interfaces/api/schema'
 
 interface BuyModalProps {
 	isShow: boolean
 	onClose: () => void
+	data: IFormSchema
 }
 
 const BuyModal = (props: BuyModalProps) => {
 	const router = useRouter()
 	const { wallet, near } = useNear()
+	const onBuyNFT = async () => {
+		await wallet?.account().functionCall({
+			contractId: `nearbali.dev-1667638867114-76946352585212`,
+			methodName: 'nft_buy',
+			args: {},
+			attachedDeposit: utils.format.parseNearAmount('1.5'),
+			gas: 200000000000000,
+		})
+	}
 	return (
 		<Modal
 			isShow={props.isShow}
@@ -43,22 +56,27 @@ const BuyModal = (props: BuyModalProps) => {
 							)}
 						</div>
 						<div
-							className="absolute top-12 -left-3 flex flex-col items-center cursor-pointer underline hover:text-opacity-60"
+							className={clsx(
+								`absolute top-12 -left-3 flex flex-col items-center underline hover:text-opacity-60`,
+								wallet?.getAccountId()
+									? `pointer-events-none`
+									: `cursor-pointer`
+							)}
 							onClick={() => router.push('https://wallet.near.org')}
 						>
-							<p className="font-semibold">Connect wallet</p>
+							<p className={clsx(`font-semibold`)}>Connect wallet</p>
 						</div>
 					</div>
 					<div className="flex flex-col items-center relative w-4/12">
 						<div className="absolute -top-10 left-10 w-20 h-20 flex items-center justify-center">
-							<NFTImage size="small" />
+							<NFTImage size="small" image={props.data.nft_image} />
 						</div>
 						<div className="absolute top-24 left-0">
 							<Button
 								size="base"
 								color="primary"
 								className="w-40"
-								onClickHandler={() => 0}
+								onClickHandler={onBuyNFT}
 							>
 								Buy Now
 							</Button>

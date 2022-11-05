@@ -2,6 +2,8 @@ import Nav from '../components/Nav'
 import Filter from '../components/Events/Filter'
 import NavbarTop from '../components/NavbarTop'
 import EventItem from '../components/Events/EventItem/Base'
+import useSWR from 'swr'
+import { EventService } from '../services/Event'
 
 const events = () => {
 	const filterData = [
@@ -18,6 +20,8 @@ const events = () => {
 			title: 'Trend',
 		},
 	]
+	const { getEvents } = EventService()
+	const { data } = useSWR(`events::all`, getEvents)
 	return (
 		<div className="max-w-[2560px] w-full bg-base min-h-screen flex">
 			<Nav />
@@ -26,11 +30,9 @@ const events = () => {
 				<NavbarTop />
 				<Filter filters={filterData} />
 				<div className="flex flex-col space-y-6">
-					<EventItem />
-					<EventItem />
-					<EventItem />
-					<EventItem />
-					<EventItem />
+					{data?.map((data, index) => {
+						return <EventItem data={data} />
+					})}
 				</div>
 			</div>
 		</div>
