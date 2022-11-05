@@ -76,9 +76,15 @@ const MyTickets = () => {
 						{ownedTicketList &&
 							Object.keys(ownedTicketList).map((contractId) => {
 								return ownedTicketList[contractId].map((nft) => {
+									const isRedeemed =
+										JSON.parse(nft.metadata.extra).attributes.redeemed ===
+										'true'
 									return (
 										<TicketModal
-											url={`${process.env.NEXT_PUBLIC_DOMAIN}/redeem?token_id=${nft.token_id}&contract_id=${contractId}`}
+											tokenId={nft.token_id}
+											contractId={contractId}
+											redeemed={isRedeemed}
+											url={`${process.env.NEXT_PUBLIC_DOMAIN}/verify-qr?token_id=${nft.token_id}&contract_id=${contractId}`}
 										>
 											{nft.metadata.title}
 										</TicketModal>

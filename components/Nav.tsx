@@ -69,6 +69,15 @@ const NavSection = ({
 				<div
 					className={clsx(
 						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
+						currTab.includes('verify-qr') && `border-l-4 border-primary`
+					)}
+					onClick={() => handleClickTab(`verify-qr`)}
+				>
+					<p>Verify Ticket</p>
+				</div>
+				<div
+					className={clsx(
+						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
 						currTab.includes('publications') && `border-l-4 border-primary`
 					)}
 					onClick={() => handleClickTab(`publications`)}
