@@ -1,6 +1,5 @@
 // @ts-nocheck
 import Nav from '../components/Nav'
-import Top from '../components/Events/Top'
 import Input from '../components/common/Input'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -9,6 +8,7 @@ import { useState } from 'react'
 import Button from '../components/Button'
 import { useNear } from '../contexts/near'
 import { CloudinaryService } from '../services/Cloudinary'
+import { utils } from 'near-api-js'
 
 const createAnEvent = () => {
 	const [title, setTitle] = useState(null)
@@ -20,26 +20,40 @@ const createAnEvent = () => {
 	const [subAccountName, setSubAccountName] = useState(null)
 	const [nftImage, setNftImage] = useState(null)
 	const [nftCopies, setNftCopies] = useState(null)
+	const [mintingPrice, setMintingPrice] = useState(null)
 
-	const { authToken, generateAuthToken } = useNear()
+	const { generateAuthToken, wallet } = useNear()
 	const { upload } = CloudinaryService()
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 
-		// upload
-		await generateAuthToken()
-		// const formdataThumbnail = new FormData()
-		// formdataThumbnail.append('file', thumbnail)
-		// formdataThumbnail.append('upload_preset', 'event_am_ticket')
-		// const resThumbnailUrl = await upload(formdataThumbnail)
+		const checkSubaccountExist = async (subaccount) => {
+			const isSubAccountExist = wallet?.account().viewFunction({
+				contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME,
+				methodName: 'is_subaccount_exist',
+				args: { subaccount: subaccount },
+			})
 
-		// const formdataNft = new FormData()
-		// formdataNft.append('file', nftImage)
-		// formdataNft.append('upload_preset', 'event_am_ticket')
-		// const resNftUrl = await upload(formdataNft)
-		const resThumbnailUrl = 'https://google.com'
-		const resNftUrl = 'https://google.com'
+			return isSubAccountExist
+		}
+
+		if (await checkSubaccountExist(subAccountName)) {
+			console.log(`Subaccount ${subAccountName} exist`)
+			return
+		}
+
+		const authToken = await generateAuthToken()
+
+		const formdataThumbnail = new FormData()
+		formdataThumbnail.append('file', thumbnail)
+		formdataThumbnail.append('upload_preset', 'event_am_ticket')
+		const resThumbnailUrl = await upload(formdataThumbnail)
+
+		const formdataNft = new FormData()
+		formdataNft.append('file', nftImage)
+		formdataNft.append('upload_preset', 'event_am_ticket')
+		const resNftUrl = await upload(formdataNft)
 
 		const res = await fetch('/api/events', {
 			method: 'POST',
@@ -51,14 +65,47 @@ const createAnEvent = () => {
 				title: title,
 				organizer_name: organizer,
 				description: description,
-				thumbnail_image: resThumbnailUrl,
+				thumbnail_image: resThumbnailUrl.url,
 				event_date: date,
 				event_location: location,
-				nft_image: resNftUrl,
-				subaccount: subAccountName,
+				nft_image: resNftUrl.url,
+				subaccount: `${subAccountName}.${proces.env.NEXT_PUBLIC_CONTRACT_NAME}`,
 				num_of_guests: nftCopies,
 			}),
 		})
+
+		const createTicketNFTContract = async () => {
+			const icon = await new Promise((r) => {
+				let a = new FileReader()
+				a.onload = r
+				a.readAsDataURL(nftImage)
+			}).then((e) => e.target.result)
+
+			await wallet?.account().functionCall({
+				contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME,
+				methodName: 'create',
+				args: {
+					subaccount: subAccountName,
+					metadata: {
+						spec: 'nft-1.0.0',
+						name: title,
+						symbol: title,
+						icon,
+					},
+					token_metadata: {
+						title: title,
+						description: description,
+						media: resNftUrl.url,
+						copies: nftCopies,
+					},
+					minting_price: utils.format.parseNearAmount(mintingPrice.toString()),
+				},
+				attachedDeposit: utils.format.parseNearAmount('3.5'),
+				gas: 200000000000000,
+			})
+		}
+
+		if (res.status === 200) await createTicketNFTContract()
 	}
 
 	return (
@@ -66,7 +113,6 @@ const createAnEvent = () => {
 			<Nav />
 			<div className="w-[320px] min-h-screen hidden lg:block" />
 			<div className="flex flex-col flex-1 p-2 lg:p-6 pt-20">
-				<Top />
 				<div className="flex flex-col w-6/12 space-y-6">
 					<div className="rounded-xl shadow-xl bg-white p-4 flex">
 						<div>
@@ -77,17 +123,20 @@ const createAnEvent = () => {
 										title="Title"
 										placeholder="NEAR Bali Meetup"
 										required="true"
+										value={title}
 										onChangeHandler={(e) => setTitle(e.target.value)}
 									/>
 									<Input
 										title="Organizer"
 										placeholder="NEAR Indonesia"
 										required="true"
+										value={organizer}
 										onChangeHandler={(e) => setOrganizer(e.target.value)}
 									/>
 									<Input
 										title="Description"
 										placeholder="The biggest meetup ever for NEAR Bali has come!"
+										value={description}
 										onChangeHandler={(e) => setDescription(e.target.value)}
 										required="true"
 										type="textarea"
@@ -115,6 +164,7 @@ const createAnEvent = () => {
 										placeholder="Bali"
 										type="input"
 										required="true"
+										value={location}
 										onChangeHandler={(e) => setLocation(e.target.value)}
 									/>
 									<Input
@@ -122,6 +172,7 @@ const createAnEvent = () => {
 										placeholder="nearbalimeetup"
 										type="input"
 										required="true"
+										value={subAccountName}
 										onChangeHandler={(e) => setSubAccountName(e.target.value)}
 									/>
 									<label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -134,13 +185,28 @@ const createAnEvent = () => {
 										required
 									/>
 									<Input
-										className="w-1/2"
 										title="Number of tickets"
 										placeholder="100"
 										type="input"
 										required="true"
 										inputType="number"
-										onChangeHandler={(e) => setNftCopies(e.target.value)}
+										value={nftCopies}
+										onChangeHandler={(e) =>
+											setNftCopies(parseInt(e.target.value))
+										}
+									/>
+									<Input
+										className="w-1/2"
+										title="Minting Price (in NEAR)"
+										placeholder="1"
+										type="input"
+										required="true"
+										inputType="number"
+										step="any"
+										value={mintingPrice}
+										onChangeHandler={(e) =>
+											setMintingPrice(parseFloat(e.target.value))
+										}
 									/>
 								</div>
 								<div className="mx-auto my-auto">

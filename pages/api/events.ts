@@ -22,7 +22,8 @@ export default async function events(
 		}
 	} else if (req.method === 'POST') {
 		try {
-			authSignature(req.headers.authorization)
+			console.log(req.headers)
+			await authSignature(req.headers.authorization)
 			const doc = new FormModel({
 				title: req.body.title,
 				organizer_name: req.body.organizer_name,
@@ -42,7 +43,7 @@ export default async function events(
 			})
 			res.end()
 		} catch (error) {
-			res.json({
+			res.status(500).json({
 				status: 0,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
@@ -50,6 +51,5 @@ export default async function events(
 			})
 			res.end()
 		}
-		// }
 	}
 }
