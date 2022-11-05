@@ -1,13 +1,16 @@
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { IMG_NFT_URL } from '../constants/url'
+import { IFormSchema } from '../interfaces/api/schema'
 
 const NFTImage = ({
 	size,
 	image = IMG_NFT_URL,
+	data,
 }: {
 	size: 'base' | 'large' | 'small'
 	image?: string
+	data?: IFormSchema
 }) => {
 	const router = useRouter()
 	return (
@@ -26,10 +29,10 @@ const NFTImage = ({
 			/>
 			<div className="flex items-center bg-base rounded-b-xl absolute bottom-0 inset-x-0 p-2 text-xs">
 				<span className="font-semibold text-textDark mx-2">#NFT 1</span>
-				{size === 'base' && (
+				{size === 'base' && data && (
 					<span
 						className="cursor-pointer text-textLight hover:text-opacity-50 transition"
-						onClick={() => router.push(`/event/1`)}
+						onClick={() => router.push(`/event/${data?.title}`)}
 					>
 						View details
 					</span>

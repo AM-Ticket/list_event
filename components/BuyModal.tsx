@@ -14,7 +14,7 @@ import { IFormSchema } from '../interfaces/api/schema'
 interface BuyModalProps {
 	isShow: boolean
 	onClose: () => void
-	data: IFormSchema
+	data?: IFormSchema
 }
 
 const BuyModal = (props: BuyModalProps) => {
@@ -69,7 +69,11 @@ const BuyModal = (props: BuyModalProps) => {
 					</div>
 					<div className="flex flex-col items-center relative w-4/12">
 						<div className="absolute -top-10 left-10 w-20 h-20 flex items-center justify-center">
-							<NFTImage size="small" image={props.data.nft_image} />
+							<NFTImage
+								data={props.data}
+								size="small"
+								image={props.data?.nft_image}
+							/>
 						</div>
 						<div className="absolute top-24 left-0">
 							<Button

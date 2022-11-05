@@ -1,10 +1,13 @@
 import { useState } from 'react'
+import { IFormSchema } from '../../interfaces/api/schema'
 import Button from '../Button'
 import BuyModal from '../BuyModal'
 import IconLike from '../icons/IconLike'
+import QRModal from '../QRModal'
 
-const Overview = () => {
+const Overview = ({ data, nftData }: { data?: IFormSchema; nftData: any }) => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)
+	const [showQRModal, setShowQRModal] = useState<boolean>(false)
 	return (
 		<div className="flex flex-col justify-between">
 			<div>
@@ -20,17 +23,41 @@ const Overview = () => {
 					quidem aut.
 				</p>
 			</div>
-			<div>
-				<Button
-					color="primary"
-					size="lg"
-					className="px-20 py-4"
-					onClickHandler={() => setShowBuyModal(true)}
-				>
-					Buy
-				</Button>
+			<div className="flex items-center space-x-4">
+				{nftData !== '0' ? (
+					<>
+						<Button color="white" className="pointer-events-none" size="lg">
+							Owned
+						</Button>
+						<Button
+							color="primary"
+							size="lg"
+							onClickHandler={() => setShowQRModal(true)}
+						>
+							Show QR
+						</Button>
+					</>
+				) : (
+					<Button
+						color="primary"
+						size="lg"
+						onClickHandler={() => setShowBuyModal(true)}
+					>
+						Buy
+					</Button>
+				)}
 			</div>
-			<BuyModal isShow={showBuyModal} onClose={() => setShowBuyModal(false)} />
+			<BuyModal
+				data={data}
+				isShow={showBuyModal}
+				onClose={() => setShowBuyModal(false)}
+			/>
+			<QRModal
+				value="https://parasid"
+				title={data?.title as string}
+				isShow={showQRModal}
+				onClose={() => setShowQRModal(false)}
+			/>
 		</div>
 	)
 }
