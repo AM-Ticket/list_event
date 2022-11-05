@@ -40,7 +40,6 @@ const Button = (props: ButtonProps) => {
 				getColor(),
 				getSize()
 			)}
-			onClick={props.onClick}
 		>
 			{props.children}
 		</button>

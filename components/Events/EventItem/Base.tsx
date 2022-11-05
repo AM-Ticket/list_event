@@ -9,10 +9,12 @@ import {
 import Button from '../../Button'
 import LeftSide from './LeftSide'
 import NFTImage from '../../NFTImage'
+import BuyModal from '../../BuyModal'
+import { useState } from 'react'
 
 const EventItem = () => {
+	const [showBuyModal, setShowBuyModal] = useState(false)
 	return (
-		// <div className="px-5">
 		<div className="rounded-xl shadow-xl bg-white flex w-8/12 mx-5">
 			<LeftSide />
 			<div className="flex flex-1 p-6 space-x-4 min-h-[320px]">
@@ -62,7 +64,7 @@ const EventItem = () => {
 					</div>
 					<div>
 						<Button
-							onClickHandler={() => 0}
+							onClickHandler={() => setShowBuyModal(true)}
 							rounded="xl"
 							size="lg"
 							color="primary"
@@ -72,8 +74,8 @@ const EventItem = () => {
 					</div>
 				</div>
 			</div>
+			<BuyModal isShow={showBuyModal} onClose={() => setShowBuyModal(false)} />
 		</div>
-		// </div>
 	)
 }
 
