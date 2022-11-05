@@ -17,4 +17,5 @@ export const formModelSchema = new Schema<IFormSchema>({
 	nft_image: String,
 	num_of_guests: Number,
 	subaccount: String,
+	minting_price: Number,
 })

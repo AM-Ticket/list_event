@@ -7,11 +7,15 @@ export default function Input({
 	onChangeHandler,
 	required = 'false',
 	inputType = null,
+	value = null,
+	step = null,
 }) {
 	let extraAttributes = {}
 	if (required === 'true')
 		extraAttributes = { required: true, ...extraAttributes }
 	if (inputType) extraAttributes = { type: inputType, ...extraAttributes }
+	if (value) extraAttributes = { value: value, ...extraAttributes }
+	if (step) extraAttributes = { step, ...extraAttributes }
 	return (
 		<div className={`w-full -mx-3 px-3 mb-6 md:mb-0 ${className}`}>
 			<label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
