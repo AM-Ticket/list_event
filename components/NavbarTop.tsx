@@ -1,13 +1,18 @@
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { useNear } from '../contexts/near'
 import Button from './Button'
+import IconCheck from './icons/IconCheck'
+import IconChevronDown from './icons/IconChevronDown'
+import IconChevronUp from './icons/IconChevronUp'
 import IconSearch from './icons/IconSearch'
 
 const NavbarTop = () => {
 	const { near, wallet, signIn } = useNear()
 	const accountId = wallet?.getAccountId() || null
 	const router = useRouter()
+	const [showMenu, setShowMenu] = useState<boolean>(false)
 	return (
 		<div
 			className={clsx(
@@ -30,18 +35,43 @@ const NavbarTop = () => {
 				</div>
 			)}
 			<div className="flex">
-				<div className="my-auto mx-1 font-semibold">{accountId}</div>
 				{accountId ? (
-					<Button
-						onClickHandler={() => {
-							wallet?.signOut()
-							location.replace('/')
-						}}
-						color="primary"
-						size="lg"
-					>
-						Sign Out
-					</Button>
+					<div className="relative flex">
+						<div
+							className="flex items-center space-x-2 cursor-pointer"
+							onClick={() => setShowMenu((prev) => !prev)}
+						>
+							<div className="my-auto mx-1 font-semibold">{accountId}</div>
+							{showMenu ? (
+								<IconChevronUp size={16} color="#393939" />
+							) : (
+								<IconChevronDown size={16} color="#393939" />
+							)}
+						</div>
+						{showMenu && (
+							<div className="absolute top-8 right-0 rounded-xl bg-white shadow-xl flex flex-col space-y-4 w-52 p-6">
+								<Button
+									onClickHandler={() => {
+										router.push('/my-tickets')
+									}}
+									color="white"
+									size="lg"
+								>
+									My Tickets
+								</Button>
+								<Button
+									onClickHandler={() => {
+										wallet?.signOut()
+										location.replace('/')
+									}}
+									color="primary"
+									size="lg"
+								>
+									Sign Out
+								</Button>
+							</div>
+						)}
+					</div>
 				) : (
 					<Button onClickHandler={signIn} color="primary" size="lg">
 						Connect Wallet

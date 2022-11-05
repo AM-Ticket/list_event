@@ -2,7 +2,13 @@ import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { IMG_NFT_URL } from '../constants/url'
 
-const NFTImage = ({ size }: { size: 'base' | 'large' | 'small' }) => {
+const NFTImage = ({
+	size,
+	image = IMG_NFT_URL,
+}: {
+	size: 'base' | 'large' | 'small'
+	image?: string
+}) => {
 	const router = useRouter()
 	return (
 		<div
@@ -14,7 +20,7 @@ const NFTImage = ({ size }: { size: 'base' | 'large' | 'small' }) => {
 			)}
 		>
 			<img
-				src={IMG_NFT_URL}
+				src={image}
 				alt=""
 				className="object-contain w-full h-full rounded-xl"
 			/>

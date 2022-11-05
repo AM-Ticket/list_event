@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Button from '../Button'
+import BuyModal from '../BuyModal'
 import IconLike from '../icons/IconLike'
-import BuyModal from './BuyModal'
 
 const Overview = () => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)
