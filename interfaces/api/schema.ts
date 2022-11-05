@@ -8,4 +8,5 @@ export interface IFormSchema {
 	nft_image?: string
 	num_of_guests?: string
 	subaccount?: string
+	minting_price?: number
 }

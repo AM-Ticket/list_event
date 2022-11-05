@@ -43,7 +43,8 @@ export function useNear() {
 			const pubKey = Buffer.from(signedMsg.publicKey.data).toString('hex')
 			const signature = Buffer.from(signedMsg.signature).toString('hex')
 			const payload = [accountId, pubKey, signature]
-			setAuthToken(Base64.encode(payload.join('&')))
+			const authToken = Base64.encode(payload.join('&'))
+			setAuthToken(authToken)
 			return authToken
 		}
 
@@ -54,6 +55,10 @@ export function useNear() {
 	}, [])
 
 	return { near, wallet, signIn, authToken, generateAuthToken }
+}
+
+const _hexToArr = (str) => {
+	return new Uint8Array(str.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)))
 }
 
 export async function authSignature(authHeader) {
@@ -90,6 +95,7 @@ export async function authSignature(authHeader) {
 		}
 		return userId
 	} catch (err) {
-		return null
+		console.error(err)
+		throw new Error(err)
 	}
 }
