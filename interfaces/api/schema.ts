@@ -9,4 +9,5 @@ export interface IFormSchema {
 	num_of_guests?: string
 	subaccount?: string
 	minting_price?: number
+	owner_id?: string
 }
