@@ -69,7 +69,7 @@ const createAnEvent = () => {
 				event_date: date,
 				event_location: location,
 				nft_image: resNftUrl.url,
-				subaccount: `${subAccountName}.${proces.env.NEXT_PUBLIC_CONTRACT_NAME}`,
+				subaccount: `${subAccountName}.${process.env.NEXT_PUBLIC_CONTRACT_NAME}`,
 				num_of_guests: nftCopies,
 			}),
 		})
@@ -90,7 +90,6 @@ const createAnEvent = () => {
 						spec: 'nft-1.0.0',
 						name: title,
 						symbol: title,
-						icon,
 					},
 					token_metadata: {
 						title: title,
@@ -100,7 +99,7 @@ const createAnEvent = () => {
 					},
 					minting_price: utils.format.parseNearAmount(mintingPrice.toString()),
 				},
-				attachedDeposit: utils.format.parseNearAmount('3.5'),
+				attachedDeposit: utils.format.parseNearAmount('4'),
 				gas: 200000000000000,
 			})
 		}
