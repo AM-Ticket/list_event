@@ -72,7 +72,7 @@ const MyTickets = () => {
 					<p className="font-extrabold text-3xl text-textDark mb-12">
 						My Tickets
 					</p>
-					<div className="grid grid-cols-2 gap-6">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6">
 						{ownedTicketList &&
 							Object.keys(ownedTicketList).map((contractId) => {
 								return ownedTicketList[contractId].map((nft) => {
@@ -81,6 +81,7 @@ const MyTickets = () => {
 										'true'
 									return (
 										<TicketModal
+											data={nft}
 											tokenId={nft.token_id}
 											contractId={contractId}
 											redeemed={isRedeemed}

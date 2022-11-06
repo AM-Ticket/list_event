@@ -99,7 +99,7 @@ const VerifyQR = () => {
 							<p>NFT has been redeemed</p>
 						)
 					) : (
-						<div className="w-[600px]">
+						<div className="w-[320px] md:w-[600px]">
 							{scanData.text}
 							<QrReader
 								facingMode={selected}

@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import { useState } from 'react'
 import { IFilter } from '../../interfaces/Filter'
-// import { TFilterEvents } from '../../types/filter'
 
 interface FilterProps {
 	filters: IFilter[]
@@ -10,7 +9,7 @@ interface FilterProps {
 const Filter = (props: FilterProps) => {
 	const [active, setActive] = useState<string>('all')
 	return (
-		<div className="px-5 mb-6 flex items-center space-x-4">
+		<div className="mb-6 flex items-center space-x-4">
 			{props.filters.map((filter, index) => {
 				return (
 					<button

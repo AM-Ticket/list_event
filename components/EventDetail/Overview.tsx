@@ -1,13 +1,43 @@
+import { useRouter } from 'next/router'
 import { useState } from 'react'
+import useSWR from 'swr'
+import { useNear } from '../../contexts/near'
 import { IFormSchema } from '../../interfaces/api/schema'
+import { EventService } from '../../services/Event'
 import Button from '../Button'
 import BuyModal from '../BuyModal'
 import IconLike from '../icons/IconLike'
 import QRModal from '../QRModal'
 
-const Overview = ({ data, nftData }: { data?: IFormSchema; nftData: any }) => {
+const Overview = ({ data }: { data?: IFormSchema }) => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)
 	const [showQRModal, setShowQRModal] = useState<boolean>(false)
+	const router = useRouter()
+	const { getEventTicketsByUser, getIsOwnedEventTicketByUser } = EventService()
+	const { wallet } = useNear()
+	const { data: nftSupply } = useSWR(
+		data && wallet?.getAccountId()
+			? {
+					contractEvent: data.subaccount,
+					account_id: wallet?.getAccountId(),
+			  }
+			: null,
+		getIsOwnedEventTicketByUser
+	)
+	const { data: nfts } = useSWR(
+		data && wallet?.getAccountId()
+			? {
+					contractEvent: data.subaccount,
+					skip: 0,
+					account_id: wallet?.getAccountId(),
+			  }
+			: null,
+		getEventTicketsByUser
+	)
+	const nft = nfts?.filter(
+		(data) => data.metadata.title === router.query.title
+	)[0]
+
 	return (
 		<div className="flex flex-col justify-between">
 			<div>
@@ -24,9 +54,13 @@ const Overview = ({ data, nftData }: { data?: IFormSchema; nftData: any }) => {
 				</p>
 			</div>
 			<div className="flex items-center space-x-4">
-				{nftData !== '0' ? (
+				{nftSupply !== '0' ? (
 					<>
-						<Button color="white" className="pointer-events-none" size="lg">
+						<Button
+							color="white"
+							className="pointer-events-none bg-gray-300"
+							size="lg"
+						>
 							Owned
 						</Button>
 						<Button
@@ -53,7 +87,9 @@ const Overview = ({ data, nftData }: { data?: IFormSchema; nftData: any }) => {
 				onClose={() => setShowBuyModal(false)}
 			/>
 			<QRModal
-				value="https://parasid"
+				contractId={data?.subaccount}
+				tokenId={nft?.token_id}
+				value={`${process.env.NEXT_PUBLIC_DOMAIN}/verify-qr?token_id=${nft?.token_id}&contract_id=${data?.subaccount}`}
 				title={data?.title as string}
 				isShow={showQRModal}
 				onClose={() => setShowQRModal(false)}

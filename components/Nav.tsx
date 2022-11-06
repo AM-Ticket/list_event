@@ -1,4 +1,3 @@
-// @ts-nocheck
 import IconEvents from '../components/icons/IconEvents'
 import clsx from 'clsx'
 import IconPublications from './icons/IconPublications'
@@ -11,6 +10,8 @@ import Button from './Button'
 import IconX from './icons/IconX'
 import dynamic from 'next/dynamic'
 import { useNear } from '../contexts/near'
+import IconUp from './icons/IconUp'
+import IconDown from './icons/IconDown'
 
 const NavSection = ({
 	screen = 'mobile',
@@ -57,7 +58,7 @@ const NavSection = ({
 					<IconEvents size={20} color="#393939" />
 					<p>Events</p>
 				</div>
-				<div
+				{/* <div
 					className={clsx(
 						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
 						currTab.includes('create-an-event') && `border-l-4 border-primary`
@@ -74,7 +75,7 @@ const NavSection = ({
 					onClick={() => handleClickTab(`verify-qr`)}
 				>
 					<p>Verify Ticket</p>
-				</div>
+				</div> */}
 				<div
 					className={clsx(
 						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
@@ -103,19 +104,21 @@ const NavSection = ({
 const Nav = () => {
 	const { generateAuthToken, authToken, wallet, signIn } = useNear()
 	const accountId = (wallet?.isSignedIn() && wallet?.getAccountId()) || null
+	const router = useRouter()
 	useEffect(() => {
 		const run = async () => {
 			if (accountId && !authToken) {
-				await generateAuthToken()
+				await generateAuthToken?.()
 			}
 		}
 		run().catch(console.error)
 	}, [accountId])
 	const [showNavbarMobile, setShowNavbarMobile] = useState<boolean>(false)
+	const [showMenu, setShowMenu] = useState<boolean>(false)
 	return (
 		<>
 			<NavSection screen="desktop" />
-			<div className="flex items-center justify-between fixed lg:hidden w-full bg-white p-4">
+			<div className="flex items-center justify-between fixed lg:hidden bg-white p-4 top-0 inset-x-0 z-50">
 				<div className="flex items-center space-x-4">
 					<div
 						className="cursor-pointer"
@@ -123,7 +126,7 @@ const Nav = () => {
 					>
 						<IconBurger size={20} color="black" />
 					</div>
-					<div className="relative">
+					{/* <div className="relative">
 						<input
 							type="text"
 							placeholder="find event"
@@ -134,30 +137,73 @@ const Nav = () => {
 							color="#C4C4C6"
 							size={14}
 						/>
-					</div>
+					</div> */}
 				</div>
 				<div className="flex">
-					<div className="my-auto mx-1 font-semibold">{accountId}</div>
 					{accountId ? (
-						<Button
-							onClickHandler={() => {
-								wallet?.signOut()
-								location.replace('/')
-							}}
-							color="primary"
-							size="sm"
-						>
-							Sign Out
-						</Button>
+						<div className="relative flex">
+							<div
+								className="flex items-center space-x-2 cursor-pointer"
+								onClick={() => setShowMenu((prev) => !prev)}
+							>
+								<div className="my-auto mx-1 font-semibold">{accountId}</div>
+								{showMenu ? (
+									<IconUp size={16} color="#393939" />
+								) : (
+									<IconDown size={16} color="#393939" />
+								)}
+							</div>
+							{showMenu && (
+								<div className="absolute top-8 right-0 rounded-xl bg-white shadow-xl flex flex-col space-y-4 w-52 p-6 z-40">
+									<Button
+										onClickHandler={() => {
+											router.push('/verify-qr')
+										}}
+										color="white"
+										size="lg"
+									>
+										Verify Ticket
+									</Button>
+									<Button
+										onClickHandler={() => {
+											router.push('/create-an-event')
+										}}
+										color="white"
+										size="lg"
+									>
+										Create an Event
+									</Button>
+									<Button
+										onClickHandler={() => {
+											router.push('/my-tickets')
+										}}
+										color="white"
+										size="lg"
+									>
+										My Tickets
+									</Button>
+									<Button
+										onClickHandler={() => {
+											wallet?.signOut()
+											location.replace('/')
+										}}
+										color="primary"
+										size="lg"
+									>
+										Sign Out
+									</Button>
+								</div>
+							)}
+						</div>
 					) : (
-						<Button onClickHandler={signIn} color="primary" size="sm">
+						<Button onClickHandler={signIn} color="primary" size="lg">
 							Connect Wallet
 						</Button>
 					)}
 				</div>
 			</div>
 			{showNavbarMobile && (
-				<div className="fixed bg-black bg-opacity-30 inset-0">
+				<div className="fixed bg-black bg-opacity-30 inset-0 z-50">
 					<NavSection
 						screen="mobile"
 						onClose={() => setShowNavbarMobile(false)}
