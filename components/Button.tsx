@@ -34,7 +34,7 @@ const Button = (props: ButtonProps) => {
 			onClick={props.onClickHandler}
 			className={clsx(
 				props.className,
-				`flex items-center justify-center transition font-semibold`,
+				`flex items-center justify-center transition font-semibold whitespace-nowrap`,
 				`rounded-${rounded}`,
 				props.isFullWidth && `w-full`,
 				getColor(),

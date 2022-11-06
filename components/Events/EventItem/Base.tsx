@@ -1,17 +1,13 @@
-import {
-	IMG_BCA_URL,
-	IMG_BNI_URL,
-	IMG_MASTERCARD_URL,
-	IMG_PAYPAL_URL,
-	IMG_VISA_URL,
-} from '../../../constants/url'
 import Button from '../../Button'
 import LeftSide from './LeftSide'
 import NFTImage from '../../NFTImage'
 import BuyModal from '../../BuyModal'
 import { useState } from 'react'
 import { IFormSchema } from '../../../interfaces/api/schema'
-import { utils } from 'near-api-js'
+import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import { useNear } from '../../../contexts/near'
+import { EventService } from '../../../services/Event'
 
 interface EventItemProps {
 	data: IFormSchema
@@ -19,20 +15,38 @@ interface EventItemProps {
 
 const EventItem = (props: EventItemProps) => {
 	const [showBuyModal, setShowBuyModal] = useState(false)
+	const { wallet } = useNear()
+	const router = useRouter()
+	const { getIsOwnedEventTicketByUser } = EventService()
+	const { data: nftSupply } = useSWR(
+		props.data && wallet?.getAccountId()
+			? {
+					contractEvent: props.data.subaccount,
+					account_id: wallet?.getAccountId(),
+			  }
+			: null,
+		getIsOwnedEventTicketByUser
+	)
 	return (
-		<div className="rounded-xl shadow-xl bg-white flex w-8/12 mx-5">
+		<div className="rounded-xl shadow-xl bg-white flex w-full md:w-8/12">
 			<LeftSide />
-			<div className="flex flex-1 p-6 space-x-4 min-h-[320px]">
-				<NFTImage data={props.data} size="base" image={props.data.nft_image} />
-				<div className="p-2 flex flex-col justify-between">
+			<div className="flex flex-wrap flex-1 p-6 space-x-0 md:space-x-4 space-y-4 md:space-y-0 z-0">
+				<div className="w-full md:w-4/12">
+					<NFTImage
+						data={props.data}
+						size="base"
+						image={props.data.nft_image}
+					/>
+				</div>
+				<div className="flex flex-col justify-between w-full md:w-7/12">
 					<div>
-						<p className="font-extrabold text-3xl text-textDark mb-2">
+						<p className="font-extrabold text-lg md:text-3xl text-textDark mb-2">
 							{props.data.title}
 						</p>
 						<p className="text-sm flex flex-wrap line-clamp-2 mb-4">
 							{props.data.description}
 						</p>
-						<p className="font-bold text-xl text-textDark mb-4">
+						<p className="font-bold text-lg text-textDark mb-4">
 							Rp {(props.data.minting_price as number) * 15000} ~ $
 							{props.data.minting_price}
 						</p>
@@ -65,15 +79,31 @@ const EventItem = (props: EventItemProps) => {
 							</div>
 						</div> */}
 					</div>
-					<div>
-						<Button
-							onClickHandler={() => setShowBuyModal(true)}
-							rounded="xl"
-							size="lg"
-							color="primary"
+					<div className="flex items-center space-x-2">
+						{nftSupply !== '0' ? (
+							<Button
+								color="white"
+								className="pointer-events-none bg-gray-300"
+								size="lg"
+							>
+								Owned
+							</Button>
+						) : (
+							<Button
+								onClickHandler={() => setShowBuyModal(true)}
+								rounded="xl"
+								size="lg"
+								color="primary"
+							>
+								Buy
+							</Button>
+						)}
+						<p
+							className="font-semibold cursor-pointer text-textDark hover:text-opacity-60 transition"
+							onClick={() => router.push(`/event/${props.data.title}`)}
 						>
-							Buy
-						</Button>
+							View Details
+						</p>
 					</div>
 				</div>
 			</div>

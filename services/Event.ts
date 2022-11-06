@@ -1,6 +1,7 @@
 import axios from "axios"
 import { useNear } from "../contexts/near"
 import { IFormSchema } from "../interfaces/api/schema"
+import { INFT } from "../interfaces/nft"
 
 export const EventService = ()=>{
   const baseReq = axios.create({
@@ -24,8 +25,22 @@ export const EventService = ()=>{
     return supply
   } 
 
+  const getEventTicketsByUser = async(contractEvent:string,skip:number, account_id: string)=>{
+    const supply: INFT[] = await wallet?.account().viewFunction({
+      contractId: contractEvent,
+      methodName: `nft_tokens_for_owner`,
+      args: {
+        account_id,
+        from_index: skip.toString(),
+        limit: 10
+      }
+    })
+    return supply
+  }
+
   return {
     getEvents,
-    getIsOwnedEventTicketByUser
+    getIsOwnedEventTicketByUser,
+    getEventTicketsByUser
   }
 }

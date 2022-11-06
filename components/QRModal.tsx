@@ -10,8 +10,8 @@ interface QRModalProps {
 	isShow: boolean
 	value: string
 	title: string
-	tokenId: string
-	contractId: string
+	tokenId?: string
+	contractId?: string
 	onClose: () => void
 }
 

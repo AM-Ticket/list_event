@@ -15,7 +15,7 @@ const NavbarTop = () => {
 	return (
 		<div
 			className={clsx(
-				`lg:flex items-center px-5 mb-6 hidden`,
+				`lg:flex items-center mb-6 hidden`,
 				router.asPath === '/events' ? `justify-between` : `justify-end`
 			)}
 		>
@@ -48,7 +48,25 @@ const NavbarTop = () => {
 							)}
 						</div>
 						{showMenu && (
-							<div className="absolute top-8 right-0 rounded-xl bg-white shadow-xl flex flex-col space-y-4 w-52 p-6">
+							<div className="absolute top-8 right-0 rounded-xl bg-white shadow-xl flex flex-col space-y-4 min-w-[208px] p-6">
+								<Button
+									onClickHandler={() => {
+										router.push('/verify-qr')
+									}}
+									color="white"
+									size="lg"
+								>
+									Verify Ticket
+								</Button>
+								<Button
+									onClickHandler={() => {
+										router.push('/create-an-event')
+									}}
+									color="white"
+									size="lg"
+								>
+									Create an Event
+								</Button>
 								<Button
 									onClickHandler={() => {
 										router.push('/my-tickets')
