@@ -35,8 +35,7 @@ export const EventService = () => {
 		contractEvent: string,
 		skip: number,
 		account_id: string
-	}
-	) => {
+	}) => {
 		const supply: INFT[] = await wallet?.account().viewFunction({
 			contractId: contractEvent,
 			methodName: `nft_tokens_for_owner`,
