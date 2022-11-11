@@ -1,7 +1,6 @@
 import { ChangeEvent, useState } from 'react'
 import InputNew from '../components/common/InputNew'
 import CommonHead from '../components/Head'
-import Loading from '../components/Loading'
 import Nav from '../components/Nav'
 import NavbarTop from '../components/NavbarTop'
 import { IFormSchema } from '../interfaces/api/schema'
@@ -20,6 +19,8 @@ import ConfirmModal from '../components/ConfirmModal'
 import { useNear } from '../contexts/near'
 import { CloudinaryService } from '../services/Cloudinary'
 import { utils } from 'near-api-js'
+import IconPlus from '../components/icons/IconPlus'
+import IconX from '../components/icons/IconX'
 
 interface IPaymentMethodCheckbox {
 	key: string
@@ -59,6 +60,7 @@ const CreateAnEvent = () => {
 		}))
 	)
 	const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
+	const [gallery, setGallery] = useState<string[]>([...Array(6)].map(() => ''))
 	const { upload } = CloudinaryService()
 	const isFulfillPaymentMethod = paymentMethodData.some((data) => data.checked)
 
@@ -83,13 +85,24 @@ const CreateAnEvent = () => {
 		setPaymentMethodData(temp)
 	}
 
+	const onChangeGallery = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+		const url = URL.createObjectURL(e.target?.files?.[0] as File)
+		const temp = [...gallery]
+		temp[index] = url
+		setGallery(temp)
+	}
+
+	const onDeleteGallery = (index: number) => {
+		const temp = [...gallery]
+		temp[index] = ''
+		setGallery(temp)
+	}
+
 	const onSubmitForm = () => {
 		setShowConfirmModal(true)
 	}
 
 	const onSubmitFormFinal: SubmitHandler<IFormSchema> = async (data) => {
-		console.log(data)
-
 		const checkSubaccountExist = async (subaccount?: string) => {
 			const isSubAccountExist = wallet?.account().viewFunction({
 				contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME,
@@ -103,7 +116,6 @@ const CreateAnEvent = () => {
 		setIsLoadingSubmit(true)
 
 		if (await checkSubaccountExist(data.subaccount)) {
-			console.log(`Subaccount ${data.subaccount} exist`)
 			setIsLoadingSubmit(false)
 			return
 		}
@@ -140,6 +152,9 @@ const CreateAnEvent = () => {
 				payment_method: paymentMethodData
 					.filter((data) => data.checked)
 					.map((data) => data.key),
+				gallery_images: gallery.every((data) => !data)
+					? []
+					: gallery.filter((data) => data),
 			}),
 		})
 
@@ -173,6 +188,8 @@ const CreateAnEvent = () => {
 
 		setIsLoadingSubmit(false)
 	}
+
+	console.log(errors)
 
 	return (
 		<div className="max-w-[2560px] w-full bg-base min-h-screen flex">
@@ -321,11 +338,16 @@ const CreateAnEvent = () => {
 							<InputNew
 								{...register('subaccount', {
 									required: true,
+									pattern: /^[-_a-zA-Z0-9]+$/,
 								})}
 								placeholder="Sub account"
 								isFullWidth
 								isError={errors.subaccount !== undefined}
-								errorMessage="Subaccount must be filled"
+								errorMessage={
+									errors.subaccount?.type === 'pattern'
+										? `Only allows A-z, 1-9, -, and _ characters`
+										: `Subaccount must be filled`
+								}
 							/>
 							<div>
 								<div>
@@ -361,6 +383,49 @@ const CreateAnEvent = () => {
 										You must choose minimum one payment method
 									</p>
 								)}
+							</div>
+							<div>
+								<p className="font-semibold text-sm mb-2">Gallery Images</p>
+								<div className="w-full border rounded-xl border-black p-4 grid grid-cols-2 md:grid-cols-3 gap-2">
+									{gallery.map((doc, idx) => (
+										<div className="relative">
+											<label
+												key={idx}
+												className="relative cursor-pointer border-2 w-28 aspect-square border-black border-dashed rounded-xl flex items-center justify-center"
+											>
+												{doc ? (
+													<>
+														<img
+															src={doc}
+															className="object-contain w-full h-full rounded-xl"
+															alt=""
+														/>
+													</>
+												) : (
+													<>
+														<IconPlus size={20} color="#393939" />
+													</>
+												)}
+												<input
+													type="file"
+													className="hidden"
+													onChange={(e) => onChangeGallery(e, idx)}
+												/>
+											</label>
+											{doc && (
+												<div
+													onClick={(e) => {
+														e.stopPropagation()
+														onDeleteGallery(idx)
+													}}
+													className="cursor-pointer z-40 flex items-center justify-center w-7 h-7 rounded-full bg-textDark hover:bg-opacity-60 absolute -top-2 -right-2"
+												>
+													<IconX size={14} color="white" />
+												</div>
+											)}
+										</div>
+									))}
+								</div>
 							</div>
 						</div>
 					</div>

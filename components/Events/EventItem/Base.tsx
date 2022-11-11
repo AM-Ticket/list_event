@@ -23,6 +23,7 @@ import moment from 'moment'
 import IconPrice from '../../icons/IconPrice'
 import IconPlace from '../../icons/IconPlace'
 import IconTicket from '../../icons/IconTicket'
+import { prettyTruncate } from '../../../db/utils/common'
 
 interface EventItemProps {
 	data: IFormSchema
@@ -60,7 +61,7 @@ const EventItem = (props: EventItemProps) => {
 						</p>
 						<p className="text-sm text-textLight flex items-center flex-wrap mb-4">
 							<IconPlace size={14} color="#969BAB" className="mr-1" />
-							{props.data.event_location}
+							{prettyTruncate(props.data.event_location, 20)}
 						</p>
 						<div className="flex items-center flex-wrap space-x-4 mb-4">
 							<div className="flex flex-col items-center space-y-2">

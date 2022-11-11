@@ -11,6 +11,7 @@ export interface IFormSchema {
 	minting_price?: number
 	owner_id?: string
 	payment_method: string[]
+	gallery_images: string[]
 }
 
 export interface IPendingTicketSchema {
