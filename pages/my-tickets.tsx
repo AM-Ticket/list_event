@@ -85,7 +85,7 @@ const MyTickets = () => {
 											tokenId={nft.token_id}
 											contractId={contractId}
 											redeemed={isRedeemed}
-											url={`${process.env.NEXT_PUBLIC_DOMAIN}/verify-qr?token_id=${nft.token_id}&contract_id=${contractId}`}
+											url={`${process.env.NEXT_PUBLIC_API_URL}/verify-qr?token_id=${nft.token_id}&contract_id=${contractId}`}
 										>
 											{nft.metadata.title}
 										</TicketModal>

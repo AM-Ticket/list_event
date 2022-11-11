@@ -12,8 +12,8 @@ export default function TicketModal(props) {
 
 	return (
 		<div className="flex items-center justify-center">
-			<div className="flex space-x-2 md:space-x-8 rounded-xl shadow-xl p-4 md:p-8">
-				<div className="w-[120px] lg:w-[240px]">
+			<div className="flex space-x-2 w-full lg:w-auto h-full md:space-x-8 rounded-xl shadow-xl p-4 md:p-8">
+				<div className="w-[120px] md:w-[160px] lg:w-[240px]">
 					<NFTImage
 						data={props.data || ''}
 						title={props.data?.metadata?.title}
