@@ -1,4 +1,4 @@
-import { IKeyPair } from "../interfaces/form"
+import { IKeyPair } from '../interfaces/form'
 
 export const PaymentMethodData: IKeyPair[] = [
 	{
