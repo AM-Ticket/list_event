@@ -9,7 +9,7 @@ const IconDown = (props: IconProps) => {
 			width={props.size}
 			height={props.size}
 			viewBox="0 0 24 24"
-			strokeWidth="1.5"
+			strokeWidth="3"
 			stroke={props.color}
 			fill="none"
 			strokeLinecap="round"

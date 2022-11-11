@@ -2,6 +2,7 @@ import { FormModel } from '../../db/models/form_model'
 import connectMongo from '../../db/utils/connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { authSignature } from '../../contexts/near'
+import { EPaymentMethod } from '../../interfaces/api/schema'
 
 export default async function events(
 	req: NextApiRequest,
@@ -22,6 +23,12 @@ export default async function events(
 		}
 	} else if (req.method === 'POST') {
 		try {
+			const validatedPaymentMethod = req.body.payment_method.filter(
+				(data: string) =>
+					data.includes(EPaymentMethod['bank_transfer']) ||
+					data.includes(EPaymentMethod['credit_card']) ||
+					data.includes(EPaymentMethod['paypal'])
+			)
 			const accountId = await authSignature(req.headers.authorization)
 			const doc = new FormModel({
 				title: req.body.title,
@@ -35,6 +42,7 @@ export default async function events(
 				subaccount: req.body.subaccount,
 				minting_price: req.body.minting_price,
 				owner_id: accountId,
+				payment_method: validatedPaymentMethod
 			})
 			await doc.validateSync()
 			await doc.save()

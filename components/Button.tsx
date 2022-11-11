@@ -1,14 +1,18 @@
 // @ts-nocheck
 import clsx from 'clsx'
+import IconSpin from './icons/IconSpin'
 
 interface ButtonProps {
 	children: React.ReactNode
-	color: 'primary' | 'white' | 'black'
+	color: 'primary' | 'white' | 'black' | 'transparent' | 'base'
 	rounded?: 'sm' | 'lg' | 'xl'
 	size?: 'sm' | 'base' | 'lg'
 	className?: string
 	onClickHandler?: Function
 	isFullWidth?: boolean
+	prefixIcon?: React.ReactNode
+	isDisabled?: boolean
+	isLoading?: boolean
 }
 
 const Button = (props: ButtonProps) => {
@@ -24,13 +28,18 @@ const Button = (props: ButtonProps) => {
 		if (props.color === 'primary')
 			return `bg-primary text-white hover:bg-opacity-50`
 		else if (props.color === 'black')
-			return `bg-black text-white hover:bg-white hover:text-black`
+			return `bg-black text-white hover:bg-opacity-60`
 		else if (props.color === 'white')
-			return `bg-white text-black hover:bg-black hover:text-white`
+			return `bg-white text-black hover:bg-neutral-60`
+		else if (props.color === 'transparent')
+			return `bg-transparent border-2 border-black text-black hover:text-opacity-60 hover:border-opactity-60`
+		else if (props.color === 'base')
+			return `bg-base text-black hover:bg-opacity-60`
 	}
 
 	return (
 		<button
+			disabled={props.isDisabled}
 			onClick={props.onClickHandler}
 			className={clsx(
 				props.className,
@@ -41,7 +50,14 @@ const Button = (props: ButtonProps) => {
 				getSize()
 			)}
 		>
-			{props.children}
+			{props.isLoading ? (
+				<IconSpin size={20} color="white" />
+			) : (
+				<>
+					{props.prefixIcon}
+					{props.children}
+				</>
+			)}
 		</button>
 	)
 }

@@ -7,32 +7,42 @@ import { EventService } from '../../services/Event'
 import useSWR from 'swr'
 import { useRouter } from 'next/router'
 import Breadcrumb from '../../components/Breadcrumb'
+import CommonHead from '../../components/Head'
+import { GetServerSideProps } from 'next'
+import { getEvents } from '../../services/SSR'
+import { IFormSchema } from '../../interfaces/api/schema'
 
-const EventDetail = () => {
-	const router = useRouter()
+const EventDetail = ({
+	events,
+	eventId,
+}: {
+	events: IFormSchema[]
+	eventId: string
+}) => {
 	const breadCrumbData = [{ path: `/events`, label: `Event List` }]
-	const { getEvents } = EventService()
-	const { data } = useSWR(`events::all`, getEvents)
-	const eventData = data?.filter(
-		(data) => data.title === router.query.eventId
-	)[0]
+
+	const eventData = events.filter((data) => data.title === eventId)[0]
 	return (
 		<div className="max-w-[2560px] w-full bg-base min-h-screen flex">
+			<CommonHead title={eventData.title} image={`/pipapo.jpeg`} />
 			<Nav />
 			<div className="w-[320px] min-h-screen hidden lg:block" />
 			<div className="flex flex-col flex-1 p-2 lg:p-6 pt-20">
 				<NavbarTop />
-				<div className="w-11/12 p-2 md:p-6">
+				{/* <div className="w-full bg-primary rounded-none md:rounded-xl h-[300px] mb-4 md:mb-8">
+					<img
+						src={eventData.thumbnail_image}
+						className="object-contain w-full h-full"
+						alt=""
+					/>
+				</div> */}
+				<div className="w-full md:w-11/12 p-2 md:p-6">
 					<div className="mb-6">
 						<Breadcrumb data={breadCrumbData} />
 					</div>
 					<div className="flex flex-wrap space-y-8 md:space-y-0 space-x-2 md:space-x-8 mb-8">
 						<div className="w-full md:w-4/12">
-							<NFTImage
-								size="small"
-								data={eventData}
-								image={eventData?.nft_image}
-							/>
+							<NFTImage data={eventData} image={eventData?.nft_image} />
 						</div>
 						<div className="w-full md:w-7/12">
 							<Overview data={eventData} />
@@ -48,6 +58,24 @@ const EventDetail = () => {
 			</div>
 		</div>
 	)
+}
+
+export const getServerSideProps: GetServerSideProps = async ({
+	query,
+	res,
+}) => {
+	if (query.transactionHashes) {
+		delete query.transactionHashes
+		res.writeHead(302, { Location: '/events' })
+		res.end()
+	}
+	const events = await getEvents()
+	return {
+		props: {
+			events,
+			eventId: query.eventId,
+		},
+	}
 }
 
 export default EventDetail

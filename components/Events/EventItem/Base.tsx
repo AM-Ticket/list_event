@@ -3,11 +3,26 @@ import LeftSide from './LeftSide'
 import NFTImage from '../../NFTImage'
 import BuyModal from '../../BuyModal'
 import { useState } from 'react'
-import { IFormSchema } from '../../../interfaces/api/schema'
+import { EPaymentMethod, IFormSchema } from '../../../interfaces/api/schema'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import { useNear } from '../../../contexts/near'
 import { EventService } from '../../../services/Event'
+import {
+	IMG_BCA_URL,
+	IMG_BNI_URL,
+	IMG_MASTERCARD2_URL,
+	IMG_MASTERCARD_URL,
+	IMG_PAYPAL2_URL,
+	IMG_PAYPAL_URL,
+	IMG_VISA2_URL,
+	IMG_VISA_URL,
+} from '../../../constants/url'
+import IconCalendar from '../../icons/IconCalendar'
+import moment from 'moment'
+import IconPrice from '../../icons/IconPrice'
+import IconPlace from '../../icons/IconPlace'
+import IconTicket from '../../icons/IconTicket'
 
 interface EventItemProps {
 	data: IFormSchema
@@ -27,63 +42,105 @@ const EventItem = (props: EventItemProps) => {
 			: null,
 		getIsOwnedEventTicketByUser
 	)
+
 	return (
-		<div className="rounded-xl shadow-xl bg-white flex w-full md:w-8/12">
+		<div className="rounded-xl shadow-xl bg-white flex w-11/12 md:w-10/12 lg:w-9/12 mx-auto md:mx-0">
 			<LeftSide />
-			<div className="flex flex-wrap flex-1 p-6 space-x-0 md:space-x-4 space-y-4 md:space-y-0 z-0">
-				<div className="w-full md:w-4/12">
-					<NFTImage
-						data={props.data}
-						size="base"
-						image={props.data.nft_image}
-					/>
+			<div className="flex flex-wrap flex-1 p-6 space-x-0 md:space-x-6 space-y-4 md:space-y-0 z-0">
+				<div className="w-11/12 md:w-4/12">
+					<NFTImage data={props.data} image={props.data.nft_image} />
 				</div>
 				<div className="flex flex-col justify-between w-full md:w-7/12">
 					<div>
 						<p className="font-extrabold text-lg md:text-3xl text-textDark mb-2">
 							{props.data.title}
 						</p>
-						<p className="text-sm flex flex-wrap line-clamp-2 mb-4">
+						<p className="text-sm flex flex-wrap line-clamp-2 mb-2">
 							{props.data.description}
 						</p>
-						<p className="font-bold text-lg text-textDark mb-4">
-							Rp {(props.data.minting_price as number) * 15000} ~ $
-							{props.data.minting_price}
+						<p className="text-sm text-textLight flex items-center flex-wrap mb-4">
+							<IconPlace size={14} color="#969BAB" className="mr-1" />
+							{props.data.event_location}
 						</p>
-						{/* <div className="flex items-center space-x-4">
-							<div className="bg-base rounded-lg py-2 px-8 flex flex-col items-center">
-								<p className="text-xs text-textLight whitespace-nowrap">
-									Credit Card
+						<div className="flex items-center flex-wrap space-x-4 mb-4">
+							<div className="flex flex-col items-center space-y-2">
+								<div className="rounded-xl p-4 bg-base flex items-center shadow-xl">
+									<IconCalendar size={25} color="#FF731C" />
+								</div>
+								<p className="text-xs font-semibold">
+									{moment(props.data.event_date).format(`ll`)}
 								</p>
-								<div className="flex items-center space-x-2">
+							</div>
+							<div className="flex flex-col items-center space-y-2">
+								<div className="rounded-xl p-4 bg-base flex items-center shadow-xl">
+									<IconPrice size={25} color="#FF731C" />
+								</div>
+								<p className="text-xs font-semibold">
+									${` `}
+									{props.data.minting_price}
+								</p>
+							</div>
+							<div className="flex flex-col items-center space-y-2">
+								<div className="rounded-xl p-4 bg-base flex items-center shadow-xl">
+									<IconTicket size={25} color="#FF731C" />
+								</div>
+								<p className="text-xs font-semibold">
+									{props.data.num_of_guests} tickets
+								</p>
+							</div>
+							{/* {props.data.payment_method.filter(
+								(data) => data === EPaymentMethod['credit_card']
+							)[0] && (
+								<div className="bg-base rounded-lg py-1 md:py-2 px-8 flex flex-col items-center w-32">
+									<p className="text-xs text-black whitespace-nowrap">
+										Credit Card
+									</p>
+									<div className="flex items-center space-x-2">
+										<img
+											src={IMG_MASTERCARD_URL}
+											alt=""
+											className="object-contain w-20"
+										/>
+										<img
+											src={IMG_VISA_URL}
+											alt=""
+											className="object-contain w-20"
+										/>
+									</div>
+								</div>
+							)}
+							{props.data.payment_method.filter(
+								(data) => data === EPaymentMethod['bank_transfer']
+							)[0] && (
+								<div className="bg-base rounded-lg py-1 md:py-2 px-8 flex flex-col items-center w-32">
+									<p className="text-xs text-black">Paypal</p>
 									<img
-										src={IMG_MASTERCARD_URL}
+										src={IMG_PAYPAL_URL}
 										alt=""
-										className="object-contain"
+										className="object-contain w-20"
 									/>
-									<img src={IMG_VISA_URL} alt="" className="object-contain" />
 								</div>
-							</div>
-							<div className="bg-base rounded-lg py-2 px-8 flex flex-col items-center">
-								<p className="text-xs text-textLight">Paypal</p>
-								<img src={IMG_PAYPAL_URL} alt="" className="object-contain" />
-							</div>
-							<div className="bg-base rounded-lg py-2 px-8 flex flex-col items-center">
-								<p className="text-xs text-textLight whitespace-nowrap">
-									Bank Transfer
-								</p>
-								<div className="flex items-center space-x-2">
-									<img src={IMG_BNI_URL} alt="" className="object-contain" />
-									<img src={IMG_BCA_URL} alt="" className="object-contain" />
+							)}
+							{props.data.payment_method.filter(
+								(data) => data === EPaymentMethod['paypal']
+							)[0] && (
+								<div className="bg-base rounded-lg py-1 md:py-2 px-8 flex flex-col items-center w-32">
+									<p className="text-xs text-black whitespace-nowrap">
+										Bank Transfer
+									</p>
+									<div className="flex items-center space-x-2">
+										<img src={IMG_BNI_URL} alt="" className="object-contain" />
+										<img src={IMG_BCA_URL} alt="" className="object-contain" />
+									</div>
 								</div>
-							</div>
-						</div> */}
+							)} */}
+						</div>
 					</div>
 					<div className="flex items-center space-x-2">
-						{nftSupply !== '0' ? (
+						{nftSupply > Number(0) ? (
 							<Button
-								color="white"
-								className="pointer-events-none bg-gray-300"
+								color="base"
+								className="pointer-events-none bg-base"
 								size="lg"
 							>
 								Owned

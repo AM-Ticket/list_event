@@ -10,6 +10,7 @@ export interface IFormSchema {
 	subaccount?: string
 	minting_price?: number
 	owner_id?: string
+	payment_method:string[]
 }
 
 export interface IPendingTicketSchema {
@@ -17,4 +18,10 @@ export interface IPendingTicketSchema {
 	contract_id: string
 	issued_at: string
 	status: 'open' | 'redeemed'
+}
+
+export enum EPaymentMethod {
+	bank_transfer = 'bank_transfer',
+	paypal = 'paypal',
+	credit_card = 'credit_card',
 }

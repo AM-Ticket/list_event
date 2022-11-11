@@ -5,13 +5,15 @@ import IconFaq from './icons/IconFaq'
 import { Router, useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import IconBurger from './icons/IconBurger'
-import IconSearch from './icons/IconSearch'
 import Button from './Button'
 import IconX from './icons/IconX'
-import dynamic from 'next/dynamic'
 import { useNear } from '../contexts/near'
 import IconUp from './icons/IconUp'
 import IconDown from './icons/IconDown'
+import { motion, Variants } from 'framer-motion'
+import IconVerify from './icons/IconVerify'
+import IconPlus from './icons/IconPlus'
+import IconTicket from './icons/IconTicket'
 
 const NavSection = ({
 	screen = 'mobile',
@@ -26,7 +28,14 @@ const NavSection = ({
 	const currTab = router.asPath
 	const handleClickTab = (route: string) => router.push(`/${route}`)
 	return (
-		<div
+		<motion.div
+			initial={screen === 'mobile' && { width: 0 }}
+			animate={
+				screen === 'mobile' && {
+					width: 280,
+				}
+			}
+			transition={{ duration: 0.3 }}
 			className={clsx(
 				`bg-white h-screen lg:flex flex-col py-8 shadow-xl`,
 				screen === 'desktop' ? `w-[320px]` : `w-[280px]`,
@@ -55,27 +64,9 @@ const NavSection = ({
 					)}
 					onClick={() => handleClickTab(`events`)}
 				>
-					<IconEvents size={20} color="#393939" />
+					<IconEvents size={20} color="#FF731C" />
 					<p>Events</p>
 				</div>
-				{/* <div
-					className={clsx(
-						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
-						currTab.includes('create-an-event') && `border-l-4 border-primary`
-					)}
-					onClick={() => handleClickTab(`create-an-event`)}
-				>
-					<p>Create an event</p>
-				</div>
-				<div
-					className={clsx(
-						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
-						currTab.includes('verify-qr') && `border-l-4 border-primary`
-					)}
-					onClick={() => handleClickTab(`verify-qr`)}
-				>
-					<p>Verify Ticket</p>
-				</div> */}
 				<div
 					className={clsx(
 						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
@@ -83,7 +74,7 @@ const NavSection = ({
 					)}
 					onClick={() => handleClickTab(`publications`)}
 				>
-					<IconPublications size={20} color="#393939" />
+					<IconPublications size={20} color="#FF731C" />
 					<p>Publications</p>
 				</div>
 				<div
@@ -93,11 +84,11 @@ const NavSection = ({
 					)}
 					onClick={() => handleClickTab(`faq`)}
 				>
-					<IconFaq size={20} color="#393939" />
+					<IconFaq size={20} color="#FF731C" />
 					<p>FAQ</p>
 				</div>
 			</div>
-		</div>
+		</motion.div>
 	)
 }
 
@@ -126,18 +117,6 @@ const Nav = () => {
 					>
 						<IconBurger size={20} color="black" />
 					</div>
-					{/* <div className="relative">
-						<input
-							type="text"
-							placeholder="find event"
-							className="appearance-none border-2 border-border rounded-lg p-3 pl-7 w-44 h-9 bg-opacity-0 bg-base"
-						/>
-						<IconSearch
-							className="absolute left-2 top-3"
-							color="#C4C4C6"
-							size={14}
-						/>
-					</div> */}
 				</div>
 				<div className="flex">
 					{accountId ? (
@@ -154,13 +133,16 @@ const Nav = () => {
 								)}
 							</div>
 							{showMenu && (
-								<div className="absolute top-8 right-0 rounded-xl bg-white shadow-xl flex flex-col space-y-4 w-52 p-6 z-40">
+								<div className="absolute top-8 right-0 rounded-xl bg-white shadow-xl flex flex-col space-y-4 min-w-[208px] p-6 z-40">
 									<Button
 										onClickHandler={() => {
 											router.push('/verify-qr')
 										}}
-										color="white"
+										color="base"
 										size="lg"
+										prefixIcon={
+											<IconVerify size={20} color="#FF731C" className="mx-1" />
+										}
 									>
 										Verify Ticket
 									</Button>
@@ -168,8 +150,11 @@ const Nav = () => {
 										onClickHandler={() => {
 											router.push('/create-an-event')
 										}}
-										color="white"
+										color="base"
 										size="lg"
+										prefixIcon={
+											<IconPlus size={20} color="#FF731C" className="mx-1" />
+										}
 									>
 										Create an Event
 									</Button>
@@ -177,8 +162,11 @@ const Nav = () => {
 										onClickHandler={() => {
 											router.push('/my-tickets')
 										}}
-										color="white"
+										color="base"
 										size="lg"
+										prefixIcon={
+											<IconTicket size={20} color="#FF731C" className="mx-1" />
+										}
 									>
 										My Tickets
 									</Button>

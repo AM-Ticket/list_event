@@ -1,7 +1,7 @@
 import React from 'react'
 import { IconProps } from '../../interfaces/IconProps'
 
-const IconUp = (props: IconProps) => {
+const IconVerify = (props: IconProps) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -9,16 +9,18 @@ const IconUp = (props: IconProps) => {
 			width={props.size}
 			height={props.size}
 			viewBox="0 0 24 24"
-			strokeWidth="3"
+			strokeWidth="2"
 			stroke={props.color}
 			fill="none"
 			strokeLinecap="round"
 			strokeLinejoin="round"
 		>
 			<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-			<polyline points="6 15 12 9 18 15" />
+			<circle cx={10} cy={10} r={7} />
+			<path d="M21 21l-6 -6" />
+			<path d="M7 10l2 2l4 -4" />
 		</svg>
 	)
 }
 
-export default IconUp
+export default IconVerify

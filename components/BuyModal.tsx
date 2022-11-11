@@ -71,11 +71,7 @@ const BuyModal = (props: BuyModalProps) => {
 					</div>
 					<div className="flex flex-col relative w-6/12 md:w-4/12">
 						<div className="h-32 flex items-center mb-8">
-							<NFTImage
-								data={props.data}
-								size="small"
-								image={props.data?.nft_image}
-							/>
+							<NFTImage data={props.data} image={props.data?.nft_image} />
 						</div>
 						<div className="flex justify-center">
 							<Button size="base" color="primary" onClickHandler={onBuyNFT}>

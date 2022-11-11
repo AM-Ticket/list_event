@@ -18,7 +18,7 @@ const Filter = (props: FilterProps) => {
 							`rounded-xl py-2 px-5 hover:bg-opacity-300 transition text-sm font-semibold`,
 							active === filter.id
 								? `bg-primary text-white`
-								: `bg-white text-textLight`
+								: `bg-white text-dark`
 						)}
 						onClick={() => {
 							setActive(filter.id)

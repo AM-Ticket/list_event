@@ -1,52 +1,96 @@
-// @ts-nocheck
+import { ChangeEvent, useState } from 'react'
+import InputNew from '../components/common/InputNew'
+import CommonHead from '../components/Head'
+import Loading from '../components/Loading'
 import Nav from '../components/Nav'
 import NavbarTop from '../components/NavbarTop'
-import Input from '../components/common/Input'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-
-import { useState } from 'react'
+import { IFormSchema } from '../interfaces/api/schema'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import TextArea from '../components/common/TextArea'
+import Upload from '../components/common/Upload'
+import IconUpload from '../components/icons/IconUpload'
+import InputDate from '../components/common/InputDate'
+import IconPlace from '../components/icons/IconPlace'
+import InputNumber from '../components/common/InputNumber'
+import IconPhoto from '../components/icons/IconPhoto'
+import { PaymentMethodData } from '../constants/form'
+import Checkbox from '../components/common/Checkbox'
 import Button from '../components/Button'
+import ConfirmModal from '../components/ConfirmModal'
 import { useNear } from '../contexts/near'
 import { CloudinaryService } from '../services/Cloudinary'
-import Loading from '../components/Loading'
-import NFTImage from '../components/NFTImage'
 import { utils } from 'near-api-js'
 
-const createAnEvent = () => {
-	const [title, setTitle] = useState(null)
-	const [organizer, setOrganizer] = useState(null)
-	const [description, setDescription] = useState(null)
-	const [thumbnail, setThumbnail] = useState(null)
-	const [date, setDate] = useState(new Date())
-	const [location, setLocation] = useState(null)
-	const [subAccountName, setSubAccountName] = useState(null)
-	const [nftImage, setNftImage] = useState(null)
-	const [nftCopies, setNftCopies] = useState(null)
+interface IPaymentMethodCheckbox {
+	key: string
+	title: string
+	checked: boolean
+}
+
+const ConfirmModalContent = () => (
+	<p className="flex items-center flex-wrap text-sm">
+		Are you sure you want to create this event?
+	</p>
+)
+
+const CreateAnEvent = () => {
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm<IFormSchema>()
 	const [isLoadingSubmit, setIsLoadingSubmit] = useState<boolean>(false)
+	const { wallet, generateAuthToken } = useNear()
+	const [nftImageFile, setNftImageFile] = useState<File | undefined>(undefined)
 	const [nftImageUrl, setNftImageUrl] = useState<string | undefined>(undefined)
+	const [thumbnailImageFile, setThumbnailImageFile] = useState<
+		File | undefined
+	>(undefined)
 	const [thumbnailImageUrl, setThumbnailImageUrl] = useState<
 		string | undefined
 	>(undefined)
-	const [mintingPrice, setMintingPrice] = useState(null)
-
-	const { generateAuthToken, wallet } = useNear()
+	const [paymentMethodData, setPaymentMethodData] = useState<
+		IPaymentMethodCheckbox[]
+	>(
+		PaymentMethodData.map((data) => ({
+			...data,
+			checked: false,
+		}))
+	)
+	const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
 	const { upload } = CloudinaryService()
+	const isFulfillPaymentMethod = paymentMethodData.some((data) => data.checked)
 
 	const onChangeThumbnail = async (e: ChangeEvent<HTMLInputElement>) => {
 		const url = URL.createObjectURL(e.target?.files?.[0] as File)
 		setThumbnailImageUrl(url)
+		setThumbnailImageFile(e.target.files?.[0])
 	}
 
 	const onChangeNFTImage = async (e: ChangeEvent<HTMLInputElement>) => {
 		const url = URL.createObjectURL(e.target?.files?.[0] as File)
 		setNftImageUrl(url)
+		setNftImageFile(e.target.files?.[0])
 	}
 
-	const handleSubmit = async (e) => {
-		e.preventDefault()
+	const onChangePaymentMethod = (
+		e: ChangeEvent<HTMLInputElement>,
+		index: number
+	) => {
+		const temp = [...paymentMethodData]
+		temp[index].checked = e.target.checked
+		setPaymentMethodData(temp)
+	}
 
-		const checkSubaccountExist = async (subaccount) => {
+	const onSubmitForm = () => {
+		setShowConfirmModal(true)
+	}
+
+	const onSubmitFormFinal: SubmitHandler<IFormSchema> = async (data) => {
+		console.log(data)
+
+		const checkSubaccountExist = async (subaccount?: string) => {
 			const isSubAccountExist = wallet?.account().viewFunction({
 				contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME,
 				methodName: 'is_subaccount_exist',
@@ -58,20 +102,21 @@ const createAnEvent = () => {
 
 		setIsLoadingSubmit(true)
 
-		if (await checkSubaccountExist(subAccountName)) {
-			console.log(`Subaccount ${subAccountName} exist`)
+		if (await checkSubaccountExist(data.subaccount)) {
+			console.log(`Subaccount ${data.subaccount} exist`)
+			setIsLoadingSubmit(false)
 			return
 		}
 
-		const authToken = await generateAuthToken()
+		const authToken = await generateAuthToken?.()
 
 		const formdataThumbnail = new FormData()
-		formdataThumbnail.append('file', thumbnail)
+		formdataThumbnail.append('file', thumbnailImageFile as File)
 		formdataThumbnail.append('upload_preset', 'event_am_ticket')
 		const resThumbnailUrl = await upload(formdataThumbnail)
 
 		const formdataNft = new FormData()
-		formdataNft.append('file', nftImage)
+		formdataNft.append('file', nftImageFile as File)
 		formdataNft.append('upload_preset', 'event_am_ticket')
 		const resNftUrl = await upload(formdataNft)
 
@@ -82,43 +127,42 @@ const createAnEvent = () => {
 				'Content-Type': 'application/json',
 			}),
 			body: JSON.stringify({
-				title: title,
-				organizer_name: organizer,
-				description: description,
+				title: data.title,
+				organizer_name: data.organizer_name,
+				description: data.description,
 				thumbnail_image: resThumbnailUrl.secure_url,
-				event_date: date,
-				event_location: location,
+				event_date: data.event_date,
+				event_location: data.event_location,
 				nft_image: resNftUrl.secure_url,
-				subaccount: `${subAccountName}.${process.env.NEXT_PUBLIC_CONTRACT_NAME}`,
-				num_of_guests: nftCopies,
-				minting_price: mintingPrice,
+				subaccount: `${data.subaccount}.${process.env.NEXT_PUBLIC_CONTRACT_NAME}`,
+				num_of_guests: data.num_of_guests,
+				minting_price: data.minting_price,
+				payment_method: paymentMethodData
+					.filter((data) => data.checked)
+					.map((data) => data.key),
 			}),
 		})
 
 		const createTicketNFTContract = async () => {
-			const icon = await new Promise((r) => {
-				let a = new FileReader()
-				a.onload = r
-				a.readAsDataURL(nftImage)
-			}).then((e) => e.target.result)
-
 			await wallet?.account().functionCall({
-				contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME,
+				contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME as string,
 				methodName: 'create',
 				args: {
-					subaccount: subAccountName,
+					subaccount: data.subaccount,
 					metadata: {
 						spec: 'nft-1.0.0',
-						name: title,
-						symbol: title,
+						name: data.title,
+						symbol: data.title,
 					},
 					token_metadata: {
-						title: title,
-						description: description,
+						title: data.title,
+						description: data.description,
 						media: resNftUrl.url,
-						copies: nftCopies,
+						copies: Number(data.num_of_guests),
 					},
-					minting_price: utils.format.parseNearAmount(mintingPrice.toString()),
+					minting_price: utils.format.parseNearAmount(
+						data.minting_price?.toString()
+					),
 				},
 				attachedDeposit: utils.format.parseNearAmount('4'),
 				gas: 200000000000000,
@@ -132,134 +176,202 @@ const createAnEvent = () => {
 
 	return (
 		<div className="max-w-[2560px] w-full bg-base min-h-screen flex">
+			<CommonHead title="Create an event" image={`/pipapo.jpeg`} />
 			<Nav />
-			<Loading isShow={isLoadingSubmit} />
+			<ConfirmModal
+				isShow={showConfirmModal}
+				onClose={() => setShowConfirmModal(false)}
+				onClick={handleSubmit(onSubmitFormFinal)}
+				title={`Create Event Confirmation`}
+				content={<ConfirmModalContent />}
+				isLoading={isLoadingSubmit}
+			/>
 			<div className="w-[320px] min-h-screen hidden lg:block" />
 			<div className="flex flex-col flex-1 p-2 lg:p-6 pt-20">
 				<NavbarTop />
-				<div className="flex w-6/12 space-y-6">
-					<div className="rounded-xl shadow-xl bg-white p-4 flex">
-						<div>
-							<h1 className="font-bold text-2xl mb-8">Create an event</h1>
-							<form className="w-full max-w-lg" onSubmit={handleSubmit}>
-								<div className="flex flex-wrap mb-6">
-									<Input
-										title="Title"
-										placeholder="NEAR Bali Meetup"
-										required="true"
-										value={title}
-										onChangeHandler={(e) => setTitle(e.target.value)}
+				<div className="w-10/12 md:w-8/12 mx-auto my-6">
+					<h1 className="font-bold text-3xl mb-4 md:mb-12">Create an event</h1>
+
+					<div className="flex flex-col md:flex-row pb-6 border-b border-primary">
+						<div className="w-full  md:w-6/12 inline-block items-center justify-center">
+							<p className="font-semibold text-lg">Basic Info</p>
+						</div>
+						<div className="w-full  md:w-6/12 flex flex-col space-y-4">
+							<InputNew
+								{...register('title', {
+									required: true,
+								})}
+								placeholder="Title event"
+								isFullWidth
+								isError={errors.title !== undefined}
+								errorMessage="Title must be filled"
+							/>
+							<InputNew
+								{...register('organizer_name', {
+									required: true,
+								})}
+								placeholder="Organizer name"
+								isFullWidth
+								isError={errors.organizer_name !== undefined}
+								errorMessage="Organizer name must be filled"
+							/>
+							<TextArea
+								{...register('description')}
+								placeholder="Description"
+								isFullWidth
+							/>
+						</div>
+					</div>
+
+					<div className="mt-6 flex flex-col md:flex-row pb-6 border-b border-primary">
+						<div className="w-6/12 inline-block items-center justify-center">
+							<p className="font-semibold text-lg">Event Info</p>
+						</div>
+						<div className="w-full md:w-6/12 flex flex-col space-y-4">
+							<InputDate {...register('event_date')} isFullWidth />
+							<InputNew
+								{...register('event_location')}
+								preffixIcon={<IconPlace size={16} color="black" />}
+								placeholder="Event location"
+								isFullWidth
+							/>
+							<div>
+								<div>
+									<p className="font-semibold text-sm">
+										<>Number of guests</>
+									</p>
+									<p className="text-contra-base-80 text-xs">
+										total NFTs that will be minted
+									</p>
+								</div>
+								<InputNumber
+									{...register('num_of_guests', {
+										required: `Number of guests must be filled`,
+									})}
+								/>
+							</div>
+							{/* {thumbnailImageUrl !== undefined && (
+								<div className="rounded-lg max-h-40 aspect-square border-2 border-black relative">
+									<img
+										src={thumbnailImageUrl}
+										alt=""
+										className="object-contain w-full h-full"
 									/>
-									<Input
-										title="Organizer"
-										placeholder="NEAR Indonesia"
-										required="true"
-										value={organizer}
-										onChangeHandler={(e) => setOrganizer(e.target.value)}
+								</div>
+							)} */}
+							{thumbnailImageUrl !== undefined ? (
+								<div className="rounded-lg max-h-44 w-full aspect-square border-2 border-black relative">
+									<img
+										src={thumbnailImageUrl}
+										alt=""
+										className="object-contain w-full h-full"
 									/>
-									<Input
-										title="Description"
-										placeholder="The biggest meetup ever for NEAR Bali has come!"
-										value={description}
-										onChangeHandler={(e) => setDescription(e.target.value)}
-										required="true"
-										type="textarea"
-									/>
-									{thumbnailImageUrl !== undefined && (
-										<div className="rounded-lg w-full max-h-40 aspect-square border-2 border-black relative mb-4">
-											<img
-												src={thumbnailImageUrl}
-												alt=""
-												className="object-contain w-full h-full"
-											/>
-										</div>
-									)}
-									<label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-										Upload Thumbnail
-									</label>
-									<input
-										className="mb-6 block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-										onChange={(e) => {
-											setThumbnail(e.target.files[0])
-											onChangeThumbnail(e)
-										}}
-										required
-										type="file"
-									/>
-									<label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-										Event Date
-									</label>
-									<div className="appearance-none block w-11/12 bg-gray-200 text-gray-700 border rounded py-3 px-2 mb-3 leading-tight focus:outline-none focus:bg-white">
-										<DatePicker
-											selected={date}
-											onChange={(date: Date) => setDate(date)}
+								</div>
+							) : (
+								<div className="rounded-lg w-full border-2 min-h-[100px] border-black bg-contra-color-yellow flex items-center justify-center">
+									<IconPhoto size={40} color="black" />
+								</div>
+							)}
+							<Upload
+								{...register('thumbnail_image', {
+									required: true,
+									onChange: onChangeThumbnail,
+								})}
+								preffixIcon={<IconUpload size={16} color="black" />}
+								label={'Upload Thumbnail'}
+							/>
+							{errors.thumbnail_image !== undefined && (
+								<p className="text-red-500 text-xs">
+									Thumbnail image must be filled
+								</p>
+							)}
+						</div>
+					</div>
+					<div className="mt-6 flex flex-col md:flex-row">
+						<div className="w-6/12 inline-block items-center justify-center">
+							<p className="font-semibold text-lg">NFTs Ticket</p>
+						</div>
+						<div className="flex flex-col space-y-4">
+							{nftImageUrl !== undefined ? (
+								<div>
+									<div className="rounded-xl max-h-64 aspect-square border-2 border-black relative">
+										<img
+											src={nftImageUrl}
+											alt=""
+											className="object-contain w-full h-full rounded-xl"
 										/>
 									</div>
-									<Input
-										title="Location"
-										placeholder="Bali"
-										type="input"
-										required="true"
-										value={location}
-										onChangeHandler={(e) => setLocation(e.target.value)}
-									/>
-									<Input
-										title="Subaccount name"
-										placeholder="nearbalimeetup"
-										type="input"
-										required="true"
-										value={subAccountName}
-										onChangeHandler={(e) => setSubAccountName(e.target.value)}
-									/>
-									{nftImageUrl !== undefined && (
-										<div className="w-full mb-4">
-											<NFTImage size="small" image={nftImageUrl} />
-										</div>
-									)}
-									<label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-										Upload NFT Image
-									</label>
-									<input
-										onChange={(e) => {
-											setNftImage(e.target.files[0])
-											onChangeNFTImage(e)
-										}}
-										className="mb-6 block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-										type="file"
-										required
-									/>
-									<Input
-										title="Number of tickets"
-										placeholder="100"
-										type="input"
-										required="true"
-										inputType="number"
-										value={nftCopies}
-										onChangeHandler={(e) =>
-											setNftCopies(parseInt(e.target.value))
-										}
-									/>
-									<Input
-										className="w-1/2"
-										title="Minting Price (in NEAR)"
-										placeholder="1"
-										type="input"
-										required="true"
-										inputType="number"
-										step="any"
-										value={mintingPrice}
-										onChangeHandler={(e) =>
-											setMintingPrice(parseFloat(e.target.value))
-										}
-									/>
 								</div>
-								<div className="mx-auto my-auto">
-									<Button color="primary" size="lg">
-										Submit
-									</Button>
+							) : (
+								<div className="rounded-lg aspect-square border-2 border-black bg-contra-color-yellow flex items-center justify-center">
+									<IconPhoto size={40} color="black" />
 								</div>
-							</form>
+							)}
+							<Upload
+								{...register('nft_image', {
+									onChange: onChangeNFTImage,
+									required: true,
+								})}
+								preffixIcon={<IconUpload size={16} color="black" />}
+								label={'Upload NFT Image'}
+							/>
+							{errors.nft_image !== undefined && (
+								<p className="text-red-500 text-xs">NFT image must be filled</p>
+							)}
+							<InputNew
+								{...register('subaccount', {
+									required: true,
+								})}
+								placeholder="Sub account"
+								isFullWidth
+								isError={errors.subaccount !== undefined}
+								errorMessage="Subaccount must be filled"
+							/>
+							<div>
+								<div>
+									<p className="font-semibold text-sm">Price</p>
+								</div>
+								<InputNumber
+									{...register('minting_price', {
+										required: `Price must be filled and number`,
+									})}
+									isFullWidth
+								/>
+							</div>
+							<div>
+								<div>
+									<p className="font-semibold text-sm mb-2">Payment Method</p>
+								</div>
+								<div className="space-y-2">
+									{paymentMethodData.map((data, index) => {
+										return (
+											<Checkbox
+												key={index}
+												checked={data.checked}
+												label={data.title}
+												id={data.key}
+												onChange={onChangePaymentMethod}
+												index={index}
+											/>
+										)
+									})}
+								</div>
+								{!isFulfillPaymentMethod && (
+									<p className="text-xs text-red-500">
+										You must choose minimum one payment method
+									</p>
+								)}
+							</div>
 						</div>
+					</div>
+					<div className="flex w-full mt-8">
+						<Button
+							onClickHandler={handleSubmit(onSubmitForm)}
+							color="primary"
+							isFullWidth
+						>
+							Create
+						</Button>
 					</div>
 				</div>
 			</div>
@@ -267,4 +379,4 @@ const createAnEvent = () => {
 	)
 }
 
-export default createAnEvent
+export default CreateAnEvent

@@ -68,7 +68,7 @@ const MyTickets = () => {
 			<div className="w-[320px] min-h-screen hidden lg:block" />
 			<div className="flex flex-col flex-1 p-2 lg:p-6 pt-20">
 				<NavbarTop />
-				<div className="p-10">
+				<div className="p-2 md:p-10">
 					<p className="font-extrabold text-3xl text-textDark mb-12">
 						My Tickets
 					</p>

@@ -6,6 +6,9 @@ import useSWR from 'swr'
 import { EventService } from '../services/Event'
 import EventListLoader from '../components/Loader/EventListLoader'
 import { GetServerSideProps } from 'next'
+import CommonHead from '../components/Head'
+import { useEffect, useState } from 'react'
+import SplashLoader from '../components/SplashLoader'
 
 const events = () => {
 	const filterData = [
@@ -24,8 +27,21 @@ const events = () => {
 	]
 	const { getEvents } = EventService()
 	const { data, isValidating } = useSWR(`events::all`, getEvents)
+	const [isRendering, setIsRendering] = useState<boolean>(true)
+
+	useEffect(() => {
+		setTimeout(() => {
+			setIsRendering(false)
+		}, 2000)
+	}, [])
+
+	if (isRendering) {
+		return <SplashLoader isLoading={isRendering} />
+	}
+
 	return (
 		<div className="max-w-[2560px] w-full bg-base min-h-screen flex">
+			<CommonHead image={`/pipapo.jpeg`} />
 			<Nav />
 			<div className="w-[320px] min-h-screen hidden lg:block" />
 			<div className="flex flex-col flex-1 p-2 lg:p-6 pt-20">
@@ -49,7 +65,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 	query,
 	res,
 }) => {
-	console.log(query)
 	if (query.transactionHashes) {
 		delete query.transactionHashes
 		res.writeHead(302, { Location: '/events' })

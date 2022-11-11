@@ -1,4 +1,1 @@
-export interface IFilter {
-  id: string
-  title: string
-}
+export type TFilterEvents = 'all' | 'newest' | 'trend'
