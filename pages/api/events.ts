@@ -42,7 +42,7 @@ export default async function events(
 				subaccount: req.body.subaccount,
 				minting_price: req.body.minting_price,
 				owner_id: accountId,
-				payment_method: validatedPaymentMethod
+				payment_method: validatedPaymentMethod,
 			})
 			await doc.validateSync()
 			await doc.save()

@@ -19,5 +19,5 @@ export const formModelSchema = new Schema<IFormSchema>({
 	subaccount: String,
 	minting_price: Number,
 	owner_id: String,
-	payment_method: [String]
+	payment_method: [String],
 })
