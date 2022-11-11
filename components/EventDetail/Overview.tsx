@@ -28,6 +28,7 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 			: null,
 		getIsOwnedEventTicketByUser
 	)
+	console.log(nftSupply)
 	const { data: nfts } = useSWR(
 		data && wallet?.getAccountId()
 			? {
@@ -43,8 +44,8 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 	)[0]
 
 	return (
-		<div className="flex flex-col justify-between">
-			<div>
+		<div className="flex flex-col justify-between relative md:h-full">
+			<div className="mb-4">
 				<p className="font-bold text-lg">
 					{moment(data?.event_date).format('MMM D')}
 				</p>
@@ -68,29 +69,29 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 					<p className="font-extrabold text-2xl text-textDark mb-2">
 						When and where
 					</p>
-					<div className="flex flex-wrap md:flex-nowrap w-full space-x-0 md:space-x-4">
-						<div className="flex space-x-4 w-full md:w-6/12 py-2">
+					<div className="flex flex-wrap lg:flex-nowrap w-full space-x-0 lg:space-x-4">
+						<div className="flex space-x-4 w-full lg:w-6/12 py-2">
 							<div>
 								<div className="rounded-xl p-2 md:p-4 bg-base flex shadow-xl">
 									<IconCalendar size={25} color="#FF731C" />
 								</div>
 							</div>
 							<div>
-								<p className="font-semibold mb-2">Date and time</p>
+								<p className="font-semibold">Date and time</p>
 								<p className="text-textDark text-opacity-40 text-sm">
 									{moment(data?.event_date).format('ddd')},{` `}
 									{moment(data?.event_date).format('LLL')}
 								</p>
 							</div>
 						</div>
-						<div className="flex space-x-4 w-full md:w-6/12 py-2">
+						<div className="flex space-x-4 w-full lg:w-6/12 py-2">
 							<div>
 								<div className="rounded-xl p-2 md:p-4 bg-base flex items-center shadow-xl">
 									<IconPlace size={25} color="#FF731C" />
 								</div>
 							</div>
 							<div>
-								<p className="font-semibold mb-2">Location</p>
+								<p className="font-semibold">Location</p>
 								<p className="text-textDark text-opacity-40 text-sm">
 									{data?.event_location}
 								</p>
@@ -99,8 +100,8 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 					</div>
 				</div>
 			</div>
-			<div className="flex items-center space-x-4">
-				{nftSupply !== '0' ? (
+			<div className="flex w-full items-center space-x-4">
+				{Number(nftSupply) > 0 ? (
 					<>
 						<Button
 							color="base"
@@ -122,6 +123,7 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 						color="primary"
 						size="lg"
 						onClickHandler={() => setShowBuyModal(true)}
+						isFullWidth
 					>
 						Buy
 					</Button>
