@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { useState } from 'react'
-import { IFilter } from '../../interfaces/Filter'
+import { IFilter } from '../../interfaces/filter'
 
 interface FilterProps {
 	filters: IFilter[]
