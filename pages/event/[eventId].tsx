@@ -36,7 +36,7 @@ const EventDetail = ({
 						alt=""
 					/>
 				</div> */}
-				<div className="w-full md:w-11/12 p-2 md:p-6">
+				<div className="w-full lg:w-11/12 p-2 md:p-6">
 					<div className="mb-6">
 						<Breadcrumb data={breadCrumbData} />
 					</div>
