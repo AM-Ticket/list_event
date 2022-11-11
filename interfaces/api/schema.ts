@@ -10,7 +10,7 @@ export interface IFormSchema {
 	subaccount?: string
 	minting_price?: number
 	owner_id?: string
-	payment_method:string[]
+	payment_method: string[]
 }
 
 export interface IPendingTicketSchema {
