@@ -5,7 +5,7 @@ import { INFT } from '../interfaces/nft'
 
 export const EventService = () => {
 	const baseReq = axios.create({
-		baseURL: process.env.API_URL,
+		baseURL: process.env.NEXT_PUBLIC_API_URL,
 	})
 	const { wallet } = useNear()
 
@@ -31,10 +31,11 @@ export const EventService = () => {
 		return supply
 	}
 
-	const getEventTicketsByUser = async (
+	const getEventTicketsByUser = async ({contractEvent, skip, account_id}:{
 		contractEvent: string,
 		skip: number,
 		account_id: string
+	}
 	) => {
 		const supply: INFT[] = await wallet?.account().viewFunction({
 			contractId: contractEvent,
