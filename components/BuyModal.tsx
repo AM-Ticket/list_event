@@ -59,7 +59,7 @@ const BuyModal = (props: BuyModalProps) => {
 						</div>
 						<div
 							className={clsx(
-								`absolute top-12 flex flex-col items-center underline hover:text-opacity-60`,
+								`absolute top-12 -ml-3 flex flex-col items-center underline hover:text-opacity-60`,
 								wallet?.getAccountId()
 									? `pointer-events-none`
 									: `cursor-pointer`
@@ -73,11 +73,13 @@ const BuyModal = (props: BuyModalProps) => {
 						<div className="h-32 flex items-center mb-8">
 							<NFTImage data={props.data} image={props.data?.nft_image} />
 						</div>
-						<div className="flex justify-center">
-							<Button size="base" color="primary" onClickHandler={onBuyNFT}>
-								Buy Now
-							</Button>
-						</div>
+						{wallet?.getAccountId() && (
+							<div className="flex justify-center">
+								<Button size="base" color={`primary`} onClickHandler={onBuyNFT}>
+									Buy Now
+								</Button>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

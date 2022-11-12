@@ -12,11 +12,11 @@ import QRModal from '../QRModal'
 import moment from 'moment'
 import IconCalendar from '../icons/IconCalendar'
 import IconPlace from '../icons/IconPlace'
-import { INFT } from '../../interfaces/nft'
 
 const Overview = ({ data }: { data?: IFormSchema }) => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)
 	const [showQRModal, setShowQRModal] = useState<boolean>(false)
+	const [isRedeemed, setIsRedeemed] = useState()
 	const router = useRouter()
 	const { getEventTicketsByUser, getIsOwnedEventTicketByUser } = EventService()
 	const { wallet } = useNear()
@@ -37,13 +37,21 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 					account_id: wallet?.getAccountId(),
 			  }
 			: null,
-		getEventTicketsByUser
+		getEventTicketsByUser,
+		{
+			onSuccess: (data) => {
+				const nft = data?.filter(
+					(data) => data.metadata.title === router.query.eventId
+				)[0]
+				const redeemed = JSON.parse(`${nft.metadata.extra}`).attributes.redeemed
+				setIsRedeemed(redeemed)
+			},
+		}
 	)
 	const nft = nfts?.filter(
 		(data) => data.metadata.title === router.query.eventId
 	)[0]
-	console.log(nfts)
-	console.log(wallet?.getAccountId(), data)
+	// console.log(JSON.parse(`${nft?.metadata?.extra}`))
 
 	return (
 		<div className="flex flex-col justify-between relative md:h-full">
@@ -104,22 +112,33 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 			</div>
 			<div className="flex w-full items-center space-x-4">
 				{Number(nftSupply) > 0 ? (
-					<>
+					isRedeemed === 'true' ? (
 						<Button
 							color="base"
 							className="pointer-events-none bg-white shadow-xl rounded-xl"
 							size="lg"
+							isFullWidth
 						>
-							Owned
+							Redeemed
 						</Button>
-						<Button
-							color="primary"
-							size="lg"
-							onClickHandler={() => setShowQRModal(true)}
-						>
-							Show QR
-						</Button>
-					</>
+					) : (
+						<>
+							<Button
+								color="base"
+								className="pointer-events-none bg-white shadow-xl rounded-xl"
+								size="lg"
+							>
+								Owned
+							</Button>
+							<Button
+								color="primary"
+								size="lg"
+								onClickHandler={() => setShowQRModal(true)}
+							>
+								Show QR
+							</Button>
+						</>
+					)
 				) : (
 					<Button
 						color="primary"

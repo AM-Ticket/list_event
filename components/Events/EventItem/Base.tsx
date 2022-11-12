@@ -33,7 +33,8 @@ const EventItem = (props: EventItemProps) => {
 	const [showBuyModal, setShowBuyModal] = useState(false)
 	const { wallet } = useNear()
 	const router = useRouter()
-	const { getIsOwnedEventTicketByUser } = EventService()
+	const { getIsOwnedEventTicketByUser, getEventTicketsByUser } = EventService()
+	const [isRedeemed, setIsRedeemed] = useState()
 	const { data: nftSupply } = useSWR(
 		props.data && wallet?.getAccountId()
 			? {
@@ -42,6 +43,29 @@ const EventItem = (props: EventItemProps) => {
 			  }
 			: null,
 		getIsOwnedEventTicketByUser
+	)
+
+	const { data: nfts } = useSWR(
+		nftSupply && wallet?.getAccountId()
+			? {
+					contractEvent: props.data.subaccount,
+					skip: 0,
+					account_id: wallet?.getAccountId(),
+			  }
+			: null,
+		getEventTicketsByUser,
+		{
+			onSuccess: (data) => {
+				const nft = data?.filter(
+					(data) => data.metadata.title === props.data.title
+				)[0]
+				const _redeemed = JSON.parse(`${nft.metadata.extra}`).attributes
+					.redeemed
+				console.log(nft)
+				console.log(_redeemed)
+				setIsRedeemed(_redeemed)
+			},
+		}
 	)
 
 	return (
@@ -139,13 +163,23 @@ const EventItem = (props: EventItemProps) => {
 					</div>
 					<div className="flex items-center space-x-2">
 						{nftSupply > Number(0) ? (
-							<Button
-								color="base"
-								className="pointer-events-none bg-base"
-								size="lg"
-							>
-								Owned
-							</Button>
+							isRedeemed === 'true' ? (
+								<Button
+									color="base"
+									className="pointer-events-none bg-base"
+									size="lg"
+								>
+									Redeemed
+								</Button>
+							) : (
+								<Button
+									color="base"
+									className="pointer-events-none bg-base"
+									size="lg"
+								>
+									Owned
+								</Button>
+							)
 						) : (
 							<Button
 								onClickHandler={() => setShowBuyModal(true)}
