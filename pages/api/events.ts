@@ -43,6 +43,7 @@ export default async function events(
 				minting_price: req.body.minting_price,
 				owner_id: accountId,
 				payment_method: validatedPaymentMethod,
+				gallery_images: req.body.gallery_images
 			})
 			await doc.validateSync()
 			await doc.save()

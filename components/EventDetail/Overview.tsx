@@ -12,6 +12,7 @@ import QRModal from '../QRModal'
 import moment from 'moment'
 import IconCalendar from '../icons/IconCalendar'
 import IconPlace from '../icons/IconPlace'
+import { INFT } from '../../interfaces/nft'
 
 const Overview = ({ data }: { data?: IFormSchema }) => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)

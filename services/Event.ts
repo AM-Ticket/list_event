@@ -5,7 +5,7 @@ import { INFT } from '../interfaces/nft'
 
 export const EventService = () => {
 	const baseReq = axios.create({
-		baseURL: process.env.API_URL,
+		baseURL: process.env.NEXT_PUBLIC_API_URL,
 	})
 	const { wallet } = useNear()
 
