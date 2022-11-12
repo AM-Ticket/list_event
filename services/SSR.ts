@@ -6,6 +6,6 @@ const SSRService = axios.create({
 })
 
 export const getEvents = async () => {
-	const res = await SSRService.get<{ data: IFormSchema[] }>(`/api/events`)
+	const res = await SSRService.get<{ data: IFormSchema[] }>(`${process.env.NEXT_PUBLIC_API_URL}/api/events`)
 	return res.data.data
 }

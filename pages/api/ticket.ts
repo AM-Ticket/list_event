@@ -69,13 +69,12 @@ export default async function events(
 				})
 				res.end()
 			}
-		} catch (error) {
-			console.log(error)
+		} catch (error:any) {
 			res.status(500).json({
 				status: 0,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				message: error._message,
+				message: error.message,
 			})
 			res.end()
 		}
@@ -114,7 +113,7 @@ export default async function events(
 				status: 0,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				message: error._message,
+				message: error.message,
 			})
 			res.end()
 		}

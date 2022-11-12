@@ -28,7 +28,6 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 			: null,
 		getIsOwnedEventTicketByUser
 	)
-	console.log(nftSupply)
 	const { data: nfts } = useSWR(
 		data && wallet?.getAccountId()
 			? {
@@ -40,8 +39,10 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 		getEventTicketsByUser
 	)
 	const nft = nfts?.filter(
-		(data) => data.metadata.title === router.query.title
+		(data) => data.metadata.title === router.query.eventId
 	)[0]
+	console.log(nfts)
+	console.log(wallet?.getAccountId(), data)
 
 	return (
 		<div className="flex flex-col justify-between relative md:h-full">
@@ -137,7 +138,7 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 			<QRModal
 				contractId={data?.subaccount}
 				tokenId={nft?.token_id}
-				value={`${process.env.NEXT_PUBLIC_DOMAIN}/verify-qr?token_id=${nft?.token_id}&contract_id=${data?.subaccount}`}
+				value={`${process.env.NEXT_PUBLIC_API_URL}/verify-qr?token_id=${nft?.token_id}&contract_id=${data?.subaccount}`}
 				title={data?.title as string}
 				isShow={showQRModal}
 				onClose={() => setShowQRModal(false)}

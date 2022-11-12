@@ -10,7 +10,7 @@ export const EventService = () => {
 	const { wallet } = useNear()
 
 	const getEvents = async () => {
-		const res = await baseReq.get<{ data: IFormSchema[] }>(`/api/events`)
+		const res = await baseReq.get<{ data: IFormSchema[] }>(`${process.env.NEXT_PUBLIC_API_URL}/api/events`)
 		return res.data.data
 	}
 
@@ -31,10 +31,11 @@ export const EventService = () => {
 		return supply
 	}
 
-	const getEventTicketsByUser = async (
+	const getEventTicketsByUser = async ({contractEvent, skip, account_id}:{
 		contractEvent: string,
 		skip: number,
 		account_id: string
+	}
 	) => {
 		const supply: INFT[] = await wallet?.account().viewFunction({
 			contractId: contractEvent,

@@ -5,6 +5,8 @@ import { useState } from 'react'
 import QRModal from './QRModal'
 import { IMG_NFT_URL } from '../constants/url'
 import { useRouter } from 'next/router'
+import Tippy from '@tippyjs/react'
+import IconInfo from './icons/IconInfo'
 
 export default function TicketModal(props) {
 	const [showQR, setShowQR] = useState<boolean>(false)
@@ -13,20 +15,20 @@ export default function TicketModal(props) {
 	return (
 		<div className="flex items-center justify-center">
 			<div className="flex space-x-2 w-full lg:w-auto h-full md:space-x-8 rounded-xl shadow-xl p-4 md:p-8">
-				<div className="w-[120px] md:w-[160px] lg:w-[240px]">
+				<div className="w-5/12">
 					<NFTImage
 						data={props.data || ''}
 						title={props.data?.metadata?.title}
 						image={props.data?.metadata?.media || IMG_NFT_URL}
 					/>
 				</div>
-				<div className="flex flex-col justify-between">
+				<div className="flex flex-col justify-between w-6/12">
 					<div>
-						<p className="font-extrabold text-xl text-textDark mb-1 md:mb-4">
+						<p className="font-extrabold text-xl text-textDark mb-2">
 							{props.children}
 						</p>
 						<p
-							className="text-sm text-textDark cursor-pointer text-opacity-60 transition"
+							className="text-sm text-textDark hover:text-opacity-60 cursor-pointer transition"
 							onClick={() => router.push(`/event/${props.children}`)}
 						>
 							View Details
@@ -42,7 +44,20 @@ export default function TicketModal(props) {
 								View QR COde
 							</Button>
 						) : (
-							<div>Redemeed</div>
+							<div className="flex items-center space-x-1">
+								<div className="bg-gray-200 text-gray-600 px-5 py-2 rounded-xl inline-block">
+									Redemeed
+								</div>
+								<Tippy
+									content={`This QR NFT Ticket can't be utilize again`}
+									theme="dark"
+									className="border-2 p-1 rounded-xl"
+								>
+									<div>
+										<IconInfo color="#393939" size={16} />
+									</div>
+								</Tippy>
+							</div>
 						)}
 					</div>
 				</div>

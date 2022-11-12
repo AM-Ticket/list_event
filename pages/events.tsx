@@ -9,6 +9,7 @@ import { GetServerSideProps } from 'next'
 import CommonHead from '../components/Head'
 import { useEffect, useState } from 'react'
 import SplashLoader from '../components/SplashLoader'
+import axios from 'axios'
 
 const events = () => {
 	const filterData = [
@@ -26,14 +27,28 @@ const events = () => {
 		},
 	]
 	const { getEvents } = EventService()
-	const { data, isValidating } = useSWR(`events::all`, getEvents)
+	// const { data, isValidating } = useSWR(`events::all`, getEvents)
+	const [data, setData] = useState([])
 	const [isRendering, setIsRendering] = useState<boolean>(true)
+	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
 		setTimeout(() => {
 			setIsRendering(false)
 		}, 2000)
 	}, [])
+
+	useEffect(() => {
+		setIsLoading(true)
+		async function fetcher() {
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_API_URL}/api/events`
+			)
+			setData(res.data.data)
+		}
+		if (!isRendering) fetcher()
+		setIsLoading(false)
+	}, [isRendering])
 
 	if (isRendering) {
 		return <SplashLoader isLoading={isRendering} />
@@ -48,7 +63,7 @@ const events = () => {
 				<NavbarTop />
 				<Filter filters={filterData} />
 				<div className="flex flex-col space-y-6">
-					{!data && isValidating ? (
+					{isLoading ? (
 						<EventListLoader />
 					) : (
 						data?.map((data, index) => {

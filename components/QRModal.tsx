@@ -53,6 +53,11 @@ const QRModal = (props: QRModalProps) => {
 				<p className="font-extrabold text-2xl text-textDark mb-10">
 					{props.title}
 				</p>
+				<p className="text-xs text-white mb-10 text-center bg-textDark p-3 rounded-xl">
+					Once you scan your QR NFT Ticket and redeemed, you can't try to
+					redeeming again. After scanning, you'll be direct to wallet page to
+					complete the transaction
+				</p>
 				<div className="flex items-center justify-center">
 					<div className="max-w-[250px] w-full">
 						<QRCode

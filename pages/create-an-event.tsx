@@ -20,6 +20,12 @@ import ConfirmModal from '../components/ConfirmModal'
 import { useNear } from '../contexts/near'
 import { CloudinaryService } from '../services/Cloudinary'
 import { utils } from 'near-api-js'
+import TicketModal from '../components/TicketModal'
+import { GetServerSideProps } from 'next'
+import { getEvents } from '../services/SSR'
+import { IMG_NFT_URL } from '../constants/url'
+import NFTImage from '../components/NFTImage'
+import { useRouter } from 'next/router'
 
 interface IPaymentMethodCheckbox {
 	key: string
@@ -33,13 +39,14 @@ const ConfirmModalContent = () => (
 	</p>
 )
 
-const CreateAnEvent = () => {
+const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 	const {
 		register,
 		handleSubmit,
 		reset,
 		formState: { errors },
 	} = useForm<IFormSchema>()
+	const router = useRouter()
 	const [isLoadingSubmit, setIsLoadingSubmit] = useState<boolean>(false)
 	const { wallet, generateAuthToken } = useNear()
 	const [nftImageFile, setNftImageFile] = useState<File | undefined>(undefined)
@@ -190,8 +197,40 @@ const CreateAnEvent = () => {
 			<div className="flex flex-col flex-1 p-2 lg:p-6 pt-20">
 				<NavbarTop />
 				<div className="w-10/12 md:w-8/12 mx-auto my-6">
+					<h1 className="font-bold text-xl mb-4">Your recently event</h1>
+					<div className="border-b border-dashed pb-3 flex space-x-4 overflow-x-auto mb-8">
+						{events
+							.filter((data) => data.owner_id === wallet?.getAccountId())
+							.map((data, index) => {
+								return (
+									<div
+										key={index}
+										className="flex items-center justify-center w-28 md:w-36 lg:w-52 h-full flex-shrink-0"
+									>
+										<div className="flex flex-wrap w-28 md:w-36 lg:w-52 h-full rounded-xl shadow-xl p-2">
+											<img
+												src={data.nft_image}
+												className="w-full aspect-square rounded-xl mb-2"
+											/>
+											<div className="flex flex-col justify-between w-full">
+												<div>
+													<p className="font-extrabold text-sm text-textDark mb-2 line-clamp-2 h-16">
+														{data.title}
+													</p>
+													<p
+														className="text-sm text-textDark hover:text-opacity-60 cursor-pointer transition"
+														onClick={() => router.push(`/event/${data.title}`)}
+													>
+														View Details
+													</p>
+												</div>
+											</div>
+										</div>
+									</div>
+								)
+							})}
+					</div>
 					<h1 className="font-bold text-3xl mb-4 md:mb-12">Create an event</h1>
-
 					<div className="flex flex-col md:flex-row pb-6 border-b border-primary">
 						<div className="w-full  md:w-6/12 inline-block items-center justify-center">
 							<p className="font-semibold text-lg">Basic Info</p>
@@ -250,15 +289,6 @@ const CreateAnEvent = () => {
 									})}
 								/>
 							</div>
-							{/* {thumbnailImageUrl !== undefined && (
-								<div className="rounded-lg max-h-40 aspect-square border-2 border-black relative">
-									<img
-										src={thumbnailImageUrl}
-										alt=""
-										className="object-contain w-full h-full"
-									/>
-								</div>
-							)} */}
 							{thumbnailImageUrl !== undefined ? (
 								<div className="rounded-lg max-h-44 w-full aspect-square border-2 border-black relative">
 									<img
@@ -377,6 +407,15 @@ const CreateAnEvent = () => {
 			</div>
 		</div>
 	)
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+	const events = await getEvents()
+	return {
+		props: {
+			events,
+		},
+	}
 }
 
 export default CreateAnEvent
