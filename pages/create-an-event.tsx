@@ -147,8 +147,6 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 			return
 		}
 
-		console.log(await generateAuthTokenRamper?.())
-
 		const authToken =
 			localStorage.getItem('ACTIVE_WALLET') === 'near-wallet'
 				? await generateAuthToken?.()

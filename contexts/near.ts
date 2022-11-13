@@ -90,7 +90,6 @@ export async function authSignature(authHeader) {
 			response.data.result.error &&
 			pubKey !== userId
 		) {
-			console.log(response.data.result.error)
 			throw new Error('unauthorized')
 		}
 		return userId

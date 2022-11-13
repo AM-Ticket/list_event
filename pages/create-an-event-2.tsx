@@ -92,7 +92,6 @@ const createAnEvent = () => {
 		setIsLoadingSubmit(true)
 
 		if (await checkSubaccountExist(subAccountName)) {
-			console.log(`Subaccount ${subAccountName} exist`)
 			return
 		}
 

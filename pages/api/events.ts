@@ -15,7 +15,6 @@ export default async function events(
 			let data
 			if (req.query.search) {
 				const search = req.query.search
-				console.log(search)
 				data = await FormModel.find({
 					$or: [
 						{ title: new RegExp(search as string, 'i') },

@@ -34,23 +34,21 @@ const events = () => {
 	const [searchQuery, setSearchQuery] = useState('')
 	const [enterSearchQuery, setEnterSearchQuery] = useState(0)
 	const { getEvents: getEventsSWR } = EventService()
-
+	const [isLoading, setIsLoading] = useState(true)
 	const onEnterSearch = () => setEnterSearchQuery((prev) => prev + 1)
 
-	const { data: _data, isValidating } = useSWR(
-		!isRendering && enterSearchQuery === 0 && `event::all`,
-		async () => await getEventsSWR(),
-		{
-			onSuccess: (data) => {
-				setData(data)
-			},
-		}
-	)
+	// const { data: _data, isValidating } = useSWR(
+	// 	enterSearchQuery === 0 && `event::all`,
+	// 	async () => await getEventsSWR(),
+	// 	{
+	// 		onSuccess: (data) => {
+	// 			setData(data)
+	// 		},
+	// 	}
+	// )
 
 	const { data: __data, isValidating: isValidatingSearch } = useSWR(
-		!isRendering && enterSearchQuery !== 0
-			? `event_search::${searchQuery}`
-			: null,
+		enterSearchQuery !== 0 ? `event_search::${searchQuery}` : null,
 		async (key: string) => {
 			const searchquery = key.split('::')[1]
 			return await getEventsSWR({ search: searchquery })
@@ -63,10 +61,22 @@ const events = () => {
 	)
 
 	useEffect(() => {
+		setIsLoading(true)
+		async function fetcher() {
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_API_URL}/api/events`
+			)
+			setData(res.data.data)
+			setIsLoading(false)
+		}
+		if (!isRendering) fetcher()
+	}, [isRendering])
+
+	useEffect(() => {
 		setTimeout(() => {
 			setIsRendering(false)
 		}, 2000)
-	}, [isRendering])
+	}, [])
 
 	if (isRendering) {
 		return <SplashLoader isLoading={isRendering} />
@@ -81,7 +91,7 @@ const events = () => {
 				<NavbarTop setSearchData={setSearchQuery} onKeyPress={onEnterSearch} />
 				<Filter filters={filterData} />
 				<div className="flex flex-col space-y-6">
-					{!data && (isValidating || isValidatingSearch) ? (
+					{!data && (isLoading || isValidatingSearch) ? (
 						<EventListLoader />
 					) : (
 						data?.map((data, index) => {

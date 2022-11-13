@@ -70,8 +70,6 @@ const EventItem = (props: EventItemProps) => {
 				)[0]
 				const _redeemed = JSON.parse(`${nft.metadata.extra}`).attributes
 					.redeemed
-				console.log(nft)
-				console.log(_redeemed)
 				setIsRedeemed(_redeemed)
 			},
 		}
