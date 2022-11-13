@@ -260,6 +260,7 @@ const Nav = ({
 											if (getActiveWallet() === 'near-wallet') wallet?.signOut()
 											else signOutRamper?.()
 											removeActiveWallet()
+											localStorage.removeItem('RAMPER_SIGNED_MSG')
 											location.replace('/')
 										}}
 										color="primary"
