@@ -12,9 +12,10 @@ export const EventService = () => {
 	const { wallet } = useNear()
 	const { viewFunction } = useRamperProvider()
 
-	const getEvents = async () => {
+	const getEvents = async (params?: object) => {
 		const res = await baseReq.get<{ data: IFormSchema[] }>(
-			`${process.env.NEXT_PUBLIC_API_URL}/api/events`
+			`${process.env.NEXT_PUBLIC_API_URL}/api/events`,
+			{ params }
 		)
 		return res.data.data
 	}

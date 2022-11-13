@@ -1,6 +1,12 @@
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import {
+	Dispatch,
+	KeyboardEventHandler,
+	SetStateAction,
+	useEffect,
+	useState,
+} from 'react'
 import { useNear } from '../contexts/near'
 import Button from './Button'
 import IconChevronDown from './icons/IconDown'
@@ -18,7 +24,13 @@ import {
 import { useRamperProvider } from '../contexts/RamperProvider'
 import { openWallet } from '@ramper/near'
 
-const NavbarTop = () => {
+const NavbarTop = ({
+	setSearchData,
+	onKeyPress,
+}: {
+	setSearchData: Dispatch<SetStateAction<string>>
+	onKeyPress: KeyboardEventHandler<HTMLInputElement>
+}) => {
 	const { wallet } = useNear()
 	const { userRamper, signOutRamper } = useRamperProvider()
 	const accountId =
@@ -43,6 +55,8 @@ const NavbarTop = () => {
 						type="text"
 						placeholder="find event"
 						className="appearance-none bg-white shadow-xl rounded-xl p-3 pl-10 w-[489px] h-12 focus:outline-none focus:border-textDark focus:ring-textDark"
+						onChange={(e) => setSearchData(e.target.value)}
+						onKeyPress={onKeyPress}
 					/>
 					<IconSearch
 						className="absolute left-4 top-4"
