@@ -18,12 +18,15 @@ import Button from '../components/Button'
 import ConfirmModal from '../components/ConfirmModal'
 import { useNear } from '../contexts/near'
 import { CloudinaryService } from '../services/Cloudinary'
-import { utils } from 'near-api-js'
+import { transactions, utils } from 'near-api-js'
 import { GetServerSideProps } from 'next'
 import { getEvents } from '../services/SSR'
 import { useRouter } from 'next/router'
 import IconPlus from '../components/icons/IconPlus'
 import IconX from '../components/icons/IconX'
+import { useRamperProvider } from '../contexts/RamperProvider'
+import { BN } from 'bn.js'
+import Toast from '../components/Toast'
 
 interface IPaymentMethodCheckbox {
 	key: string
@@ -45,10 +48,18 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 		formState: { errors },
 	} = useForm<IFormSchema>()
 	const router = useRouter()
+	const {
+		viewFunction,
+		userRamper,
+		signAndSendTransactions,
+		generateAuthTokenRamper,
+	} = useRamperProvider()
 	const [isLoadingSubmit, setIsLoadingSubmit] = useState<boolean>(false)
 	const { wallet, generateAuthToken } = useNear()
 	const [nftImageFile, setNftImageFile] = useState<File | undefined>(undefined)
 	const [nftImageUrl, setNftImageUrl] = useState<string | undefined>(undefined)
+	const [showSubaccountExistToast, setShowSubaccountExistToast] =
+		useState(false)
 	const [thumbnailImageFile, setThumbnailImageFile] = useState<
 		File | undefined
 	>(undefined)
@@ -108,11 +119,18 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 
 	const onSubmitFormFinal: SubmitHandler<IFormSchema> = async (data) => {
 		const checkSubaccountExist = async (subaccount?: string) => {
-			const isSubAccountExist = wallet?.account().viewFunction({
-				contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME,
-				methodName: 'is_subaccount_exist',
-				args: { subaccount: subaccount },
-			})
+			const isSubAccountExist =
+				localStorage.getItem('ACTIVE_WALLET') === 'near-wallet'
+					? wallet?.account().viewFunction({
+							contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME,
+							methodName: 'is_subaccount_exist',
+							args: { subaccount: subaccount },
+					  })
+					: viewFunction({
+							receiverId: process.env.NEXT_PUBLIC_CONTRACT_NAME as string,
+							methodName: 'is_subaccount_exist',
+							args: { subaccount: subaccount },
+					  })
 
 			return isSubAccountExist
 		}
@@ -121,10 +139,20 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 
 		if (await checkSubaccountExist(data.subaccount)) {
 			setIsLoadingSubmit(false)
+			setShowConfirmModal(false)
+			setShowSubaccountExistToast(true)
+			setTimeout(() => {
+				setShowSubaccountExistToast(false)
+			}, 2000)
 			return
 		}
 
-		const authToken = await generateAuthToken?.()
+		console.log(await generateAuthTokenRamper?.())
+
+		const authToken =
+			localStorage.getItem('ACTIVE_WALLET') === 'near-wallet'
+				? await generateAuthToken?.()
+				: await generateAuthTokenRamper?.()
 
 		const formdataThumbnail = new FormData()
 		formdataThumbnail.append('file', thumbnailImageFile as File)
@@ -163,29 +191,86 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 		})
 
 		const createTicketNFTContract = async () => {
-			await wallet?.account().functionCall({
-				contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME as string,
-				methodName: 'create',
-				args: {
-					subaccount: data.subaccount,
-					metadata: {
-						spec: 'nft-1.0.0',
-						name: data.title,
-						symbol: data.title,
-					},
-					token_metadata: {
-						title: data.title,
-						description: data.description,
-						media: resNftUrl.url,
-						copies: Number(data.num_of_guests),
-					},
-					minting_price: utils.format.parseNearAmount(
-						data.minting_price?.toString()
-					),
-				},
-				attachedDeposit: utils.format.parseNearAmount('4'),
-				gas: 200000000000000,
-			})
+			localStorage.getItem('ACTIVE_WALLET') === 'near-wallet'
+				? await wallet?.account().functionCall({
+						contractId: process.env.NEXT_PUBLIC_CONTRACT_NAME as string,
+						methodName: 'create',
+						args: {
+							subaccount: data.subaccount,
+							metadata: {
+								spec: 'nft-1.0.0',
+								name: data.title,
+								symbol: data.title,
+							},
+							token_metadata: {
+								title: data.title,
+								description: data.description,
+								media: resNftUrl.url,
+								copies: Number(data.num_of_guests),
+							},
+							minting_price: utils.format.parseNearAmount(
+								data.minting_price?.toString()
+							),
+						},
+						attachedDeposit: new BN(
+							utils.format.parseNearAmount('4') as string
+						),
+						gas: new BN(200000000000000),
+				  })
+				: await signAndSendTransactions({
+						receiverId: process.env.NEXT_PUBLIC_CONTRACT_NAME as string,
+						actions: [
+							transactions.functionCall(
+								'create',
+								{
+									subaccount: data.subaccount,
+									metadata: {
+										spec: 'nft-1.0.0',
+										name: data.title,
+										symbol: data.title,
+									},
+									token_metadata: {
+										title: data.title,
+										description: data.description,
+										media: resNftUrl.url,
+										copies: Number(data.num_of_guests),
+									},
+									minting_price: utils.format.parseNearAmount(
+										data.minting_price?.toString()
+									),
+								},
+								new BN(200000000000000),
+								new BN(utils.format.parseNearAmount('4') as string)
+							),
+
+							// {
+							// 	// @ts-ignore
+							// 	type: 'FunctionCall',
+							// 	params: {
+							// 		methodName: 'create',
+							// 		args: {
+							// 			subaccount: data.subaccount,
+							// 			metadata: {
+							// 				spec: 'nft-1.0.0',
+							// 				name: data.title,
+							// 				symbol: data.title,
+							// 			},
+							// 			token_metadata: {
+							// 				title: data.title,
+							// 				description: data.description,
+							// 				media: resNftUrl.url,
+							// 				copies: Number(data.num_of_guests),
+							// 			},
+							// 			minting_price: utils.format.parseNearAmount(
+							// 				data.minting_price?.toString()
+							// 			),
+							// 		},
+							// 		attachedDeposit: utils.format.parseNearAmount('4'),
+							// 		gas: 200000000000000,
+							// 	},
+							// },
+						],
+				  })
 		}
 
 		if (res.status === 200) await createTicketNFTContract()
@@ -193,12 +278,15 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 		setIsLoadingSubmit(false)
 	}
 
-	console.log(errors)
-
 	return (
 		<div className="max-w-[2560px] w-full bg-base min-h-screen flex">
 			<CommonHead title="Create an event" image={`/pipapo.jpeg`} />
 			<Nav />
+			<Toast
+				type={`error`}
+				show={showSubaccountExistToast}
+				text="Sub account is already exist"
+			/>
 			<ConfirmModal
 				isShow={showConfirmModal}
 				onClose={() => setShowConfirmModal(false)}
@@ -214,7 +302,11 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 					<h1 className="font-bold text-xl mb-4">Your recently event</h1>
 					<div className="border-b border-dashed pb-3 flex space-x-4 overflow-x-auto mb-8">
 						{events
-							.filter((data) => data.owner_id === wallet?.getAccountId())
+							.filter(
+								(data) =>
+									data.owner_id ===
+									(wallet?.getAccountId() || userRamper?.wallets.near.publicKey)
+							)
 							.map((data, index) => {
 								return (
 									<div

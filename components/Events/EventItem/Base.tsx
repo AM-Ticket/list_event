@@ -24,6 +24,7 @@ import IconPrice from '../../icons/IconPrice'
 import IconPlace from '../../icons/IconPlace'
 import IconTicket from '../../icons/IconTicket'
 import { prettyTruncate } from '../../../db/utils/common'
+import { useRamperProvider } from '../../../contexts/RamperProvider'
 
 interface EventItemProps {
 	data: IFormSchema
@@ -32,25 +33,27 @@ interface EventItemProps {
 const EventItem = (props: EventItemProps) => {
 	const [showBuyModal, setShowBuyModal] = useState(false)
 	const { wallet } = useNear()
+	const { userRamper } = useRamperProvider()
+	const accountId = wallet?.getAccountId() || userRamper?.wallets.near.publicKey
 	const router = useRouter()
 	const { getIsOwnedEventTicketByUser, getEventTicketsByUser } = EventService()
 	const [isRedeemed, setIsRedeemed] = useState()
 	const { data: nftSupply } = useSWR(
-		props.data && wallet?.getAccountId()
+		props.data && accountId
 			? {
 					contractEvent: props.data.subaccount,
-					account_id: wallet?.getAccountId(),
+					account_id: accountId,
 			  }
 			: null,
 		getIsOwnedEventTicketByUser
 	)
 
 	const { data: nfts } = useSWR(
-		nftSupply && wallet?.getAccountId()
+		nftSupply && accountId
 			? {
 					contractEvent: props.data.subaccount,
 					skip: 0,
-					account_id: wallet?.getAccountId(),
+					account_id: accountId,
 			  }
 			: null,
 		getEventTicketsByUser,
@@ -113,52 +116,6 @@ const EventItem = (props: EventItemProps) => {
 									{props.data.num_of_guests} tickets
 								</p>
 							</div>
-							{/* {props.data.payment_method.filter(
-								(data) => data === EPaymentMethod['credit_card']
-							)[0] && (
-								<div className="bg-base rounded-lg py-1 md:py-2 px-8 flex flex-col items-center w-32">
-									<p className="text-xs text-black whitespace-nowrap">
-										Credit Card
-									</p>
-									<div className="flex items-center space-x-2">
-										<img
-											src={IMG_MASTERCARD_URL}
-											alt=""
-											className="object-contain w-20"
-										/>
-										<img
-											src={IMG_VISA_URL}
-											alt=""
-											className="object-contain w-20"
-										/>
-									</div>
-								</div>
-							)}
-							{props.data.payment_method.filter(
-								(data) => data === EPaymentMethod['bank_transfer']
-							)[0] && (
-								<div className="bg-base rounded-lg py-1 md:py-2 px-8 flex flex-col items-center w-32">
-									<p className="text-xs text-black">Paypal</p>
-									<img
-										src={IMG_PAYPAL_URL}
-										alt=""
-										className="object-contain w-20"
-									/>
-								</div>
-							)}
-							{props.data.payment_method.filter(
-								(data) => data === EPaymentMethod['paypal']
-							)[0] && (
-								<div className="bg-base rounded-lg py-1 md:py-2 px-8 flex flex-col items-center w-32">
-									<p className="text-xs text-black whitespace-nowrap">
-										Bank Transfer
-									</p>
-									<div className="flex items-center space-x-2">
-										<img src={IMG_BNI_URL} alt="" className="object-contain" />
-										<img src={IMG_BCA_URL} alt="" className="object-contain" />
-									</div>
-								</div>
-							)} */}
 						</div>
 					</div>
 					<div className="flex items-center space-x-2">

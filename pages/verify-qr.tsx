@@ -9,6 +9,8 @@ import axios from 'axios'
 import { useInterval } from '../hooks/useInterval'
 import Toast from '../components/Toast'
 import Loading from '../components/Loading'
+import { getActiveWallet } from '../db/utils/common'
+import { useRamperProvider } from '../contexts/RamperProvider'
 
 const VerifyQR = () => {
 	const [selected, setSelected] = useState('environment')
@@ -16,6 +18,7 @@ const VerifyQR = () => {
 	const [postedTicket, setPostedTicket] = useState(false)
 	const [isRedeemed, setIsRedeemed] = useState(false)
 	const { wallet, generateAuthToken } = useNear()
+	const { generateAuthTokenRamper } = useRamperProvider()
 	const router = useRouter()
 	const [tokenId, setTokenId] = useState()
 	const [contractId, setContractId] = useState()
@@ -39,7 +42,10 @@ const VerifyQR = () => {
 		// if (router.query.token_id && router.query.contract_id && !postedTicket) {
 		if (tokenId && contractId && !postedTicket) {
 			const postPendingTicket = async () => {
-				const authToken = await generateAuthToken()
+				const authToken =
+					getActiveWallet() === 'near-wallet'
+						? await generateAuthToken()
+						: await generateAuthTokenRamper()
 				try {
 					await axios.post(
 						'/api/ticket',
@@ -71,17 +77,27 @@ const VerifyQR = () => {
 	useInterval(() => {
 		if (postedTicket && !isRedeemed) {
 			const checkNft = async () => {
-				const token = await wallet?.account().viewFunction({
-					contractId: contractId,
-					methodName: 'nft_token',
-					args: {
-						token_id: tokenId,
-					},
-				})
+				const token =
+					getActiveWallet() === 'near-wallet'
+						? await wallet?.account().viewFunction({
+								contractId: contractId,
+								methodName: 'nft_token',
+								args: {
+									token_id: tokenId,
+								},
+						  })
+						: await viewFunction({
+								receiverId: contractId,
+								methodName: 'nft_token',
+								args: { token_id: tokenId },
+						  })
 				const redeemed =
 					JSON.parse(token?.metadata.extra).attributes.redeemed === 'true'
 				if (redeemed === true) {
-					const authToken = await generateAuthToken()
+					const authToken =
+						getActiveWallet() === 'near-wallet'
+							? await generateAuthToken()
+							: await generateAuthTokenRamper()
 					await axios.put(
 						'/api/ticket',
 						{

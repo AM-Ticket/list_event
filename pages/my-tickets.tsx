@@ -6,12 +6,15 @@ import Nav from '../components/Nav'
 import NavbarTop from '../components/NavbarTop'
 import TicketModal from '../components/TicketModal'
 import { useNear } from '../contexts/near'
+import { useRamperProvider } from '../contexts/RamperProvider'
+import { getActiveWallet } from '../db/utils/common'
 
 const MyTickets = () => {
 	const [eventList, setEventList] = useState(null)
 	const [ownedTicketList, setOwnedTicketList] = useState(null)
 	const { wallet } = useNear()
-	const router = useRouter()
+	const { userRamper, viewFunction } = useRamperProvider()
+	const accountId = wallet?.getAccountId() || userRamper?.wallets.near.publicKey
 
 	useEffect(() => {
 		const fetchEvents = async () => {
@@ -23,7 +26,7 @@ const MyTickets = () => {
 	}, [])
 
 	useEffect(() => {
-		const account_id = wallet?.getAccountId()
+		const account_id = accountId
 		if (eventList && eventList.length > 0) {
 			const contracts = eventList
 				.filter((event) => event.subaccount)
@@ -34,25 +37,39 @@ const MyTickets = () => {
 			let nftsOwned = []
 			contracts.map(async (contract) => {
 				let nftsOwnedPerContract = []
-				const supply = await wallet?.account().viewFunction({
-					contractId: contract,
-					methodName: 'nft_supply_for_owner',
-					args: {
-						account_id,
-					},
-				})
+				const supply =
+					getActiveWallet() === 'near-wallet'
+						? await wallet?.account().viewFunction({
+								contractId: contract,
+								methodName: 'nft_supply_for_owner',
+								args: {
+									account_id,
+								},
+						  })
+						: await viewFunction({
+								receiverId: contract,
+								methodName: 'nft_supply_for_owner',
+								args: { account_id },
+						  })
 				let nftsResult = [0]
 				let i = 0
 				while (nftsOwnedPerContract.length < supply) {
-					nftsResult = await wallet?.account().viewFunction({
-						contractId: contract,
-						methodName: 'nft_tokens_for_owner',
-						args: {
-							account_id,
-							from_index: i.toString(),
-							limit: 10,
-						},
-					})
+					nftsResult =
+						getActiveWallet() === 'near-wallet'
+							? await wallet?.account().viewFunction({
+									contractId: contract,
+									methodName: 'nft_tokens_for_owner',
+									args: {
+										account_id,
+										from_index: i.toString(),
+										limit: 10,
+									},
+							  })
+							: await viewFunction({
+									receiverId: contract,
+									methodName: 'nft_tokens_for_owner',
+									args: { account_id, from_index: i.toString(), limit: 10 },
+							  })
 					i += 10
 					nftsOwnedPerContract = [...nftsResult, ...nftsOwnedPerContract]
 				}

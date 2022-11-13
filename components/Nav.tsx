@@ -14,6 +14,13 @@ import { motion, Variants } from 'framer-motion'
 import IconVerify from './icons/IconVerify'
 import IconPlus from './icons/IconPlus'
 import IconTicket from './icons/IconTicket'
+import LoginModal from './LoginModal'
+import {
+	getActiveWallet,
+	prettyTruncate,
+	removeActiveWallet,
+} from '../db/utils/common'
+import { useRamperProvider } from '../contexts/RamperProvider'
 
 const NavSection = ({
 	screen = 'mobile',
@@ -94,21 +101,34 @@ const NavSection = ({
 
 const Nav = () => {
 	const { generateAuthToken, authToken, wallet, signIn } = useNear()
-	const accountId = (wallet?.isSignedIn() && wallet?.getAccountId()) || null
+	const { userRamper, signOutRamper, generateAuthTokenRamper } =
+		useRamperProvider()
+	const accountId =
+		(wallet?.isSignedIn() && wallet?.getAccountId()) ||
+		userRamper?.wallets.near.publicKey ||
+		null
 	const router = useRouter()
 	useEffect(() => {
 		const run = async () => {
 			if (accountId && !authToken) {
-				await generateAuthToken?.()
+				getActiveWallet() === 'near-wallet'
+					? await generateAuthToken?.()
+					: await generateAuthTokenRamper?.()
 			}
 		}
 		run().catch(console.error)
 	}, [accountId])
 	const [showNavbarMobile, setShowNavbarMobile] = useState<boolean>(false)
 	const [showMenu, setShowMenu] = useState<boolean>(false)
+	const [showLoginModal, setShowLoginModal] = useState(false)
+
 	return (
 		<>
 			<NavSection screen="desktop" />
+			<LoginModal
+				isShow={showLoginModal}
+				onClose={() => setShowLoginModal(false)}
+			/>
 			<div className="flex items-center justify-between fixed lg:hidden bg-white p-4 top-0 inset-x-0 z-50">
 				<div className="flex items-center space-x-4">
 					<div
@@ -125,7 +145,9 @@ const Nav = () => {
 								className="flex items-center space-x-2 cursor-pointer"
 								onClick={() => setShowMenu((prev) => !prev)}
 							>
-								<div className="my-auto mx-1 font-semibold">{accountId}</div>
+								<div className="my-auto mx-1 font-semibold">
+									{prettyTruncate(accountId, 18, 'address')}
+								</div>
 								{showMenu ? (
 									<IconUp size={16} color="#393939" />
 								) : (
@@ -172,7 +194,9 @@ const Nav = () => {
 									</Button>
 									<Button
 										onClickHandler={() => {
-											wallet?.signOut()
+											if (getActiveWallet() === 'near-wallet') wallet?.signOut()
+											else signOutRamper?.()
+											removeActiveWallet()
 											location.replace('/')
 										}}
 										color="primary"
@@ -184,7 +208,11 @@ const Nav = () => {
 							)}
 						</div>
 					) : (
-						<Button onClickHandler={signIn} color="primary" size="lg">
+						<Button
+							onClickHandler={() => setShowLoginModal(true)}
+							color="primary"
+							size="lg"
+						>
 							Connect Wallet
 						</Button>
 					)}
