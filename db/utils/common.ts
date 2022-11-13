@@ -9,3 +9,15 @@ export const prettyTruncate = (str = '', len = 8, type?: string) => {
 	}
 	return str
 }
+
+export const getActiveWallet = () => {
+	return localStorage.getItem('ACTIVE_WALLET')
+}
+
+export const setActiveWallet = (wallet: string) => {
+	return localStorage.setItem('ACTIVE_WALLET', wallet)
+}
+
+export const removeActiveWallet = () => {
+	return localStorage.removeItem('ACTIVE_WALLET')
+}

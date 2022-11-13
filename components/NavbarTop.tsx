@@ -1,6 +1,12 @@
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import {
+	Dispatch,
+	KeyboardEventHandler,
+	SetStateAction,
+	useEffect,
+	useState,
+} from 'react'
 import { useNear } from '../contexts/near'
 import Button from './Button'
 import IconChevronDown from './icons/IconDown'
@@ -9,12 +15,29 @@ import IconSearch from './icons/IconSearch'
 import IconPlus from './icons/IconPlus'
 import IconVerify from './icons/IconVerify'
 import IconTicket from './icons/IconTicket'
+import LoginModal from './LoginModal'
+import {
+	getActiveWallet,
+	prettyTruncate,
+	removeActiveWallet,
+} from '../db/utils/common'
+import { useRamperProvider } from '../contexts/RamperProvider'
+import { openWallet } from '@ramper/near'
 
-const NavbarTop = () => {
-	const { near, wallet, signIn } = useNear()
-	const accountId = wallet?.getAccountId() || null
+const NavbarTop = ({
+	setSearchData,
+	onKeyPress,
+}: {
+	setSearchData?: Dispatch<SetStateAction<string>>
+	onKeyPress?: KeyboardEventHandler<HTMLInputElement>
+}) => {
+	const { wallet } = useNear()
+	const { userRamper, signOutRamper } = useRamperProvider()
+	const accountId =
+		wallet?.getAccountId() || userRamper?.wallets?.near.publicKey || null
 	const router = useRouter()
 	const [showMenu, setShowMenu] = useState<boolean>(false)
+	const [showLoginModal, setShowLoginModal] = useState(false)
 	return (
 		<div
 			className={clsx(
@@ -22,12 +45,18 @@ const NavbarTop = () => {
 				router.asPath === '/events' ? `justify-between` : `justify-end`
 			)}
 		>
+			<LoginModal
+				isShow={showLoginModal}
+				onClose={() => setShowLoginModal(false)}
+			/>
 			{router.asPath === '/events' && (
 				<div className="relative flex items-center">
 					<input
 						type="text"
 						placeholder="find event"
 						className="appearance-none bg-white shadow-xl rounded-xl p-3 pl-10 w-[489px] h-12 focus:outline-none focus:border-textDark focus:ring-textDark"
+						onChange={(e) => setSearchData?.(e.target.value)}
+						onKeyPress={onKeyPress}
 					/>
 					<IconSearch
 						className="absolute left-4 top-4"
@@ -43,7 +72,9 @@ const NavbarTop = () => {
 							className="flex items-center space-x-2 cursor-pointer bg-white p-3 rounded-xl shadow-xl"
 							onClick={() => setShowMenu((prev) => !prev)}
 						>
-							<div className="my-auto mx-1 font-semibold">{accountId}</div>
+							<div className="my-auto mx-1 font-semibold">
+								{prettyTruncate(accountId, 18, 'address')}
+							</div>
 							{showMenu ? (
 								<IconChevronUp size={16} color="#393939" />
 							) : (
@@ -88,9 +119,24 @@ const NavbarTop = () => {
 								>
 									My Tickets
 								</Button>
+								{getActiveWallet() === 'ramper' && (
+									<Button
+										onClickHandler={openWallet}
+										color="base"
+										size="lg"
+										prefixIcon={
+											<IconTicket size={20} color="#FF731C" className="mx-1" />
+										}
+									>
+										My Ramper Wallet
+									</Button>
+								)}
 								<Button
 									onClickHandler={() => {
-										wallet?.signOut()
+										if (getActiveWallet() === 'near-wallet') wallet?.signOut()
+										else signOutRamper?.()
+										removeActiveWallet()
+										localStorage.removeItem('RAMPER_SIGNED_MSG')
 										location.replace('/')
 									}}
 									color="primary"
@@ -102,7 +148,11 @@ const NavbarTop = () => {
 						)}
 					</div>
 				) : (
-					<Button onClickHandler={signIn} color="primary" size="lg">
+					<Button
+						onClickHandler={() => setShowLoginModal(true)}
+						color="primary"
+						size="lg"
+					>
 						Connect Wallet
 					</Button>
 				)}

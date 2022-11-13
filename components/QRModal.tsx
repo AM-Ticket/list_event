@@ -5,6 +5,8 @@ import QRCode from 'react-qr-code'
 import { useInterval } from '../hooks/useInterval'
 import axios from 'axios'
 import { useNear } from '../contexts/near'
+import { useRamperProvider } from '../contexts/RamperProvider'
+import { getActiveWallet } from '../db/utils/common'
 
 interface QRModalProps {
 	isShow: boolean
@@ -17,6 +19,7 @@ interface QRModalProps {
 
 const QRModal = (props: QRModalProps) => {
 	const { wallet } = useNear()
+	const { signAndSendTransactions } = useRamperProvider()
 	useInterval(() => {
 		if (props.isShow) {
 			let pendingTicket = null
@@ -26,15 +29,27 @@ const QRModal = (props: QRModalProps) => {
 				})
 
 				if (pendingTicket.data.data.status === 'open') {
-					await wallet?.account().functionCall({
-						contractId: props.contractId,
-						methodName: 'redeem_nft',
-						args: {
-							token_id: props.tokenId,
-						},
-						attachedDeposit: 1,
-						gas: 200000000000000,
-					})
+					getActiveWallet() === 'near-wallet'
+						? await wallet?.account().functionCall({
+								contractId: props.contractId,
+								methodName: 'redeem_nft',
+								args: {
+									token_id: props.tokenId,
+								},
+								attachedDeposit: 1,
+								gas: 200000000000000,
+						  })
+						: await signAndSendTransactions({
+								receiverId: props.contractId,
+								actions: [
+									transactions.functionCall(
+										'redeem_nft',
+										{ token_id: props.tokenId },
+										new BN(200000000000000),
+										new BN(1)
+									),
+								],
+						  })
 				}
 			}
 			getPendingTicket().catch(console.error)

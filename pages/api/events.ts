@@ -12,7 +12,18 @@ export default async function events(
 
 	if (req.method === 'GET') {
 		try {
-			const data = await FormModel.find()
+			let data
+			if (req.query.search) {
+				const search = req.query.search
+				data = await FormModel.find({
+					$or: [
+						{ title: new RegExp(search as string, 'i') },
+						{ organizer_name: new RegExp(search as string, 'i') },
+					],
+				}).exec()
+			} else {
+				data = await FormModel.find()
+			}
 			res.json({
 				status: res.statusCode,
 				data: data,
@@ -43,7 +54,7 @@ export default async function events(
 				minting_price: req.body.minting_price,
 				owner_id: accountId,
 				payment_method: validatedPaymentMethod,
-				gallery_images: req.body.gallery_images
+				gallery_images: req.body.gallery_images,
 			})
 			await doc.validateSync()
 			await doc.save()

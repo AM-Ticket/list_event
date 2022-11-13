@@ -3,7 +3,13 @@ import clsx from 'clsx'
 import IconPublications from './icons/IconPublications'
 import IconFaq from './icons/IconFaq'
 import { Router, useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import {
+	Dispatch,
+	KeyboardEventHandler,
+	SetStateAction,
+	useEffect,
+	useState,
+} from 'react'
 import IconBurger from './icons/IconBurger'
 import Button from './Button'
 import IconX from './icons/IconX'
@@ -14,6 +20,14 @@ import { motion, Variants } from 'framer-motion'
 import IconVerify from './icons/IconVerify'
 import IconPlus from './icons/IconPlus'
 import IconTicket from './icons/IconTicket'
+import LoginModal from './LoginModal'
+import {
+	getActiveWallet,
+	prettyTruncate,
+	removeActiveWallet,
+} from '../db/utils/common'
+import { useRamperProvider } from '../contexts/RamperProvider'
+import IconSearch from './icons/IconSearch'
 
 const NavSection = ({
 	screen = 'mobile',
@@ -67,7 +81,7 @@ const NavSection = ({
 					<IconEvents size={20} color="#FF731C" />
 					<p>Events</p>
 				</div>
-				<div
+				{/* <div
 					className={clsx(
 						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
 						currTab.includes('publications') && `border-l-4 border-primary`
@@ -76,7 +90,7 @@ const NavSection = ({
 				>
 					<IconPublications size={20} color="#FF731C" />
 					<p>Publications</p>
-				</div>
+				</div> */}
 				<div
 					className={clsx(
 						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
@@ -92,23 +106,43 @@ const NavSection = ({
 	)
 }
 
-const Nav = () => {
+const Nav = ({
+	setSearchData,
+	onKeyPress,
+}: {
+	setSearchData?: Dispatch<SetStateAction<string>>
+	onKeyPress?: KeyboardEventHandler<HTMLInputElement>
+}) => {
 	const { generateAuthToken, authToken, wallet, signIn } = useNear()
-	const accountId = (wallet?.isSignedIn() && wallet?.getAccountId()) || null
+	const { userRamper, signOutRamper, generateAuthTokenRamper } =
+		useRamperProvider()
+	const accountId =
+		(wallet?.isSignedIn() && wallet?.getAccountId()) ||
+		userRamper?.wallets.near.publicKey ||
+		null
 	const router = useRouter()
 	useEffect(() => {
 		const run = async () => {
 			if (accountId && !authToken) {
-				await generateAuthToken?.()
+				getActiveWallet() === 'near-wallet'
+					? await generateAuthToken?.()
+					: await generateAuthTokenRamper?.()
 			}
 		}
 		run().catch(console.error)
 	}, [accountId])
 	const [showNavbarMobile, setShowNavbarMobile] = useState<boolean>(false)
 	const [showMenu, setShowMenu] = useState<boolean>(false)
+	const [showLoginModal, setShowLoginModal] = useState(false)
+	const [showSearchbar, setShowSearchbar] = useState(false)
+
 	return (
 		<>
 			<NavSection screen="desktop" />
+			<LoginModal
+				isShow={showLoginModal}
+				onClose={() => setShowLoginModal(false)}
+			/>
 			<div className="flex items-center justify-between fixed lg:hidden bg-white p-4 top-0 inset-x-0 z-50">
 				<div className="flex items-center space-x-4">
 					<div
@@ -117,6 +151,38 @@ const Nav = () => {
 					>
 						<IconBurger size={20} color="black" />
 					</div>
+					<div
+						className="cursor-pointer"
+						onClick={() => setShowSearchbar((prev) => !prev)}
+					>
+						<IconSearch color="black" size={20} />
+					</div>
+					{showSearchbar && (
+						<>
+							<motion.input
+								type="text"
+								placeholder="find event"
+								className="absolute inset-x-0 appearance-none bg-white shadow-xl rounded-xl p-3 h-12 focus:outline-none focus:border-textDark focus:ring-textDark"
+								onChange={(e) => setSearchData?.(e.target.value)}
+								onKeyPress={onKeyPress}
+								initial={{ width: 0 }}
+								animate={{ width: `100%` }}
+								transition={{ duration: 0.7 }}
+							/>
+							<motion.div
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								transition={{ duration: 1.4 }}
+								onClick={() => setShowSearchbar(false)}
+							>
+								<IconX
+									className="absolute right-4 top-6 cursor-pointer"
+									color="black"
+									size={18}
+								/>
+							</motion.div>
+						</>
+					)}
 				</div>
 				<div className="flex">
 					{accountId ? (
@@ -125,7 +191,9 @@ const Nav = () => {
 								className="flex items-center space-x-2 cursor-pointer"
 								onClick={() => setShowMenu((prev) => !prev)}
 							>
-								<div className="my-auto mx-1 font-semibold">{accountId}</div>
+								<div className="my-auto mx-1 font-semibold">
+									{prettyTruncate(accountId, 18, 'address')}
+								</div>
 								{showMenu ? (
 									<IconUp size={16} color="#393939" />
 								) : (
@@ -172,7 +240,9 @@ const Nav = () => {
 									</Button>
 									<Button
 										onClickHandler={() => {
-											wallet?.signOut()
+											if (getActiveWallet() === 'near-wallet') wallet?.signOut()
+											else signOutRamper?.()
+											removeActiveWallet()
 											location.replace('/')
 										}}
 										color="primary"
@@ -184,7 +254,11 @@ const Nav = () => {
 							)}
 						</div>
 					) : (
-						<Button onClickHandler={signIn} color="primary" size="lg">
+						<Button
+							onClickHandler={() => setShowLoginModal(true)}
+							color="primary"
+							size="lg"
+						>
 							Connect Wallet
 						</Button>
 					)}

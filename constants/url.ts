@@ -16,3 +16,7 @@ export const IMG_PAYPAL_URL =
 	'https://res.cloudinary.com/dbcmvymir/image/upload/v1667565812/jsk2u5oy0fsu5cyp6b4j.png'
 export const IMG_PAYPAL2_URL =
 	'https://res.cloudinary.com/dbcmvymir/image/upload/v1667999479/uewirnlo4r1uhrlwsnqr.png'
+export const IMG_RAMPER_URL =
+	'http://res.cloudinary.com/dbcmvymir/image/upload/v1668260791/eftgjypwz8xtowozjadd.png'
+export const IMG_NEAR_URL =
+	'http://res.cloudinary.com/dbcmvymir/image/upload/v1668261070/k6fgeh5imbytqw73lbbz.png'

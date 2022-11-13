@@ -12,6 +12,7 @@ import QRModal from '../QRModal'
 import moment from 'moment'
 import IconCalendar from '../icons/IconCalendar'
 import IconPlace from '../icons/IconPlace'
+import { useRamperProvider } from '../../contexts/RamperProvider'
 
 const Overview = ({ data }: { data?: IFormSchema }) => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)
@@ -20,21 +21,23 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 	const router = useRouter()
 	const { getEventTicketsByUser, getIsOwnedEventTicketByUser } = EventService()
 	const { wallet } = useNear()
+	const { userRamper } = useRamperProvider()
+	const accountId = wallet?.getAccountId() || userRamper?.wallets.near.publicKey
 	const { data: nftSupply } = useSWR(
-		data && wallet?.getAccountId()
+		data && accountId
 			? {
 					contractEvent: data.subaccount,
-					account_id: wallet?.getAccountId(),
+					account_id: accountId,
 			  }
 			: null,
 		getIsOwnedEventTicketByUser
 	)
 	const { data: nfts } = useSWR(
-		data && wallet?.getAccountId()
+		data && accountId
 			? {
 					contractEvent: data.subaccount,
 					skip: 0,
-					account_id: wallet?.getAccountId(),
+					account_id: accountId,
 			  }
 			: null,
 		getEventTicketsByUser,
@@ -51,7 +54,6 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 	const nft = nfts?.filter(
 		(data) => data.metadata.title === router.query.eventId
 	)[0]
-	// console.log(JSON.parse(`${nft?.metadata?.extra}`))
 
 	return (
 		<div className="flex flex-col justify-between relative md:h-full">

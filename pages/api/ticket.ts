@@ -39,7 +39,6 @@ export default async function events(
 			}).exec()
 
 			if (docForm.owner_id !== accountId) {
-				console.log('not owner')
 				throw new Error('Not owner')
 			}
 
@@ -69,7 +68,7 @@ export default async function events(
 				})
 				res.end()
 			}
-		} catch (error:any) {
+		} catch (error: any) {
 			res.status(500).json({
 				status: 0,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -87,7 +86,6 @@ export default async function events(
 			}).exec()
 
 			if (docForm.owner_id !== accountId) {
-				console.log('not owner')
 				throw new Error('Not owner')
 			}
 
