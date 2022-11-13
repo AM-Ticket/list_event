@@ -110,8 +110,8 @@ const Nav = ({
 	setSearchData,
 	onKeyPress,
 }: {
-	setSearchData: Dispatch<SetStateAction<string>>
-	onKeyPress: KeyboardEventHandler<HTMLInputElement>
+	setSearchData?: Dispatch<SetStateAction<string>>
+	onKeyPress?: KeyboardEventHandler<HTMLInputElement>
 }) => {
 	const { generateAuthToken, authToken, wallet, signIn } = useNear()
 	const { userRamper, signOutRamper, generateAuthTokenRamper } =
@@ -163,7 +163,7 @@ const Nav = ({
 								type="text"
 								placeholder="find event"
 								className="absolute inset-x-0 appearance-none bg-white shadow-xl rounded-xl p-3 h-12 focus:outline-none focus:border-textDark focus:ring-textDark"
-								onChange={(e) => setSearchData(e.target.value)}
+								onChange={(e) => setSearchData?.(e.target.value)}
 								onKeyPress={onKeyPress}
 								initial={{ width: 0 }}
 								animate={{ width: `100%` }}

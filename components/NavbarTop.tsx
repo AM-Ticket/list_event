@@ -28,8 +28,8 @@ const NavbarTop = ({
 	setSearchData,
 	onKeyPress,
 }: {
-	setSearchData: Dispatch<SetStateAction<string>>
-	onKeyPress: KeyboardEventHandler<HTMLInputElement>
+	setSearchData?: Dispatch<SetStateAction<string>>
+	onKeyPress?: KeyboardEventHandler<HTMLInputElement>
 }) => {
 	const { wallet } = useNear()
 	const { userRamper, signOutRamper } = useRamperProvider()
@@ -55,7 +55,7 @@ const NavbarTop = ({
 						type="text"
 						placeholder="find event"
 						className="appearance-none bg-white shadow-xl rounded-xl p-3 pl-10 w-[489px] h-12 focus:outline-none focus:border-textDark focus:ring-textDark"
-						onChange={(e) => setSearchData(e.target.value)}
+						onChange={(e) => setSearchData?.(e.target.value)}
 						onKeyPress={onKeyPress}
 					/>
 					<IconSearch
