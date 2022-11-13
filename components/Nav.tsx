@@ -28,6 +28,7 @@ import {
 } from '../db/utils/common'
 import { useRamperProvider } from '../contexts/RamperProvider'
 import IconSearch from './icons/IconSearch'
+import { openWallet } from '@ramper/near'
 
 const NavSection = ({
 	screen = 'mobile',
@@ -238,6 +239,22 @@ const Nav = ({
 									>
 										My Tickets
 									</Button>
+									{getActiveWallet() === 'ramper' && (
+										<Button
+											onClickHandler={openWallet}
+											color="base"
+											size="lg"
+											prefixIcon={
+												<IconTicket
+													size={20}
+													color="#FF731C"
+													className="mx-1"
+												/>
+											}
+										>
+											My Ramper Wallet
+										</Button>
+									)}
 									<Button
 										onClickHandler={() => {
 											if (getActiveWallet() === 'near-wallet') wallet?.signOut()
