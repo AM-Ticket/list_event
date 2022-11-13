@@ -25,6 +25,7 @@ export function useNear() {
 		const wallet = new nearAPI.WalletConnection(near, null)
 		function signIn() {
 			wallet.requestSignIn({ contractId: nearConfig.contractName })
+			localStorage.setItem('ACTIVE_WALLET', 'near-wallet')
 		}
 
 		async function generateAuthToken() {
