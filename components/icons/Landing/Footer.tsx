@@ -1,16 +1,28 @@
+import { useRouter } from 'next/router'
 import {
 	URL_DISCORD,
+	URL_GITHUB,
 	URL_LINKEDIN,
 	URL_NEAR,
 	URL_TWITTER,
 } from '../../../constants/url'
+import IconExternalLink from '../IconExternalLink'
 import IconNear from '../IconNear'
 import IconDiscordWhite from './IconDiscordWhite'
 import IconInstagramWhite from './IconInstagramWhite'
 import IconLinkedinWhite from './IconLinkedinWhite'
 import IconTwitterWhite from './IconTwitterWhite'
+import { Link } from 'react-scroll'
+import { Dispatch, SetStateAction } from 'react'
 
-const Footer = () => {
+const Footer = ({
+	activetab,
+	setactivetab,
+}: {
+	activetab: string
+	setactivetab: Dispatch<SetStateAction<string>>
+}) => {
+	const router = useRouter()
 	return (
 		<div className="w-full bg-footer pt-10 pb-20 px-8 lg:px-20 text-white grid grid-cols-12">
 			<div className="col-span-12 lg:col-span-4 -ml-5 flex cursor-pointer">
@@ -18,11 +30,27 @@ const Footer = () => {
 			</div>
 			<div className="col-span-6 lg:col-span-2 flex flex-col py-5">
 				<p className="font-semibold text-base mb-2">ABOUT</p>
-				<p className="text-sm mb-1 text text-neutral-60 hover:text-opacity-70 cursor-pointer">
-					Vision
-				</p>
-				<p className="text-sm mb-1 text-neutral-60 hover:text-opacity-70 cursor-pointer">
+				<Link
+					activeClass="active"
+					to={activetab}
+					spy={true}
+					smooth={true}
+					duration={250}
+					offset={-100}
+				>
+					<p
+						className="text-sm mb-1 text text-neutral-60 hover:text-opacity-70 cursor-pointer"
+						onClick={() => setactivetab('vision')}
+					>
+						Vision
+					</p>
+				</Link>
+				<p
+					className="text-sm mb-1 text-neutral-60 hover:text-opacity-70 cursor-pointer flex items-center"
+					onClick={() => router.push(`/events`)}
+				>
 					Pipapo Events
+					<IconExternalLink size={20} />
 				</p>
 				<p className="text-sm text-neutral-60 hover:text-opacity-70 cursor-pointer">
 					Pipapo Dashboard
@@ -30,9 +58,12 @@ const Footer = () => {
 			</div>
 			<div className="col-span-6 lg:col-span-2 flex flex-col py-5">
 				<p className="font-semibold text-base mb-2">SUPPORT</p>
-				<p className="text-sm mb-1 text-neutral-60 hover:text-opacity-70 cursor-pointer">
-					Developer
-				</p>
+				<a href={URL_GITHUB} target={`_blank`}>
+					<p className="text-sm mb-1 text-neutral-60 hover:text-opacity-70 cursor-pointer flex items-center">
+						Developer
+						<IconExternalLink size={18} className="mx-1" color="white" />
+					</p>
+				</a>
 				<p className="text-sm text-neutral-60 hover:text-opacity-70 cursor-pointer">
 					Community
 				</p>

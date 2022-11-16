@@ -13,8 +13,14 @@ import IconX from '../icons/IconX'
 import IconDown from '../icons/IconDown'
 import { Link } from 'react-scroll'
 import IconExternalLink from '../icons/IconExternalLink'
-import { URL_DISCORD, URL_TELEGRAM, URL_TWITTER } from '../../constants/url'
+import {
+	URL_DISCORD,
+	URL_GITHUB,
+	URL_TELEGRAM,
+	URL_TWITTER,
+} from '../../constants/url'
 import Emblem from '../Emblem'
+import { TMenu } from '../../interfaces/landing'
 
 interface IMenu {
 	about: boolean
@@ -22,8 +28,6 @@ interface IMenu {
 	developer: boolean
 	community: boolean
 }
-
-type TMenu = 'about' | 'product' | 'developer' | 'community'
 
 const Dropdown = ({
 	type,
@@ -88,7 +92,7 @@ const Dropdown = ({
 			)}
 			{type === 'developer' && (
 				<>
-					<a href="https://github.com/AM-Ticket" target={`_blank`}>
+					<a href={URL_GITHUB} target={`_blank`}>
 						<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-xl">
 							<IconGithub size={28} color="#FF731C" className="w-3/12" />
 							<div className="text-textDark w-9/12">
@@ -287,6 +291,13 @@ const LandingNav = ({
 						className="w-40 aspect-[4/1] object-contain rounded-xl"
 						alt=""
 					/>
+					<Button
+						color="primary"
+						size="base"
+						onClickHandler={() => router.push(`/events`)}
+					>
+						Launch App
+					</Button>
 					<div
 						className="cursor-pointer"
 						onClick={() => setShowSmallMenu((prev) => !prev)}
@@ -311,12 +322,27 @@ const LandingNav = ({
 									<IconDown size={20} color="black" />
 								</div>
 								{aboutMenuSmall && (
-									<div className="w-full cursor-pointer">
-										<p className="py-4 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
-											<IconStar size={24} color="#FF731C" className="w-10" />
-											Vision
-										</p>
-									</div>
+									<Link
+										activeClass="active"
+										to={activetab}
+										spy={true}
+										smooth={true}
+										duration={250}
+										offset={-100}
+									>
+										<div
+											className="w-full cursor-pointer"
+											onClick={() => {
+												setactivetab('vision')
+												setShowSmallMenu(false)
+											}}
+										>
+											<p className="py-4 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
+												<IconStar size={24} color="#FF731C" className="w-10" />
+												Vision
+											</p>
+										</div>
+									</Link>
 								)}
 							</div>
 							<div>
@@ -329,7 +355,10 @@ const LandingNav = ({
 								</div>
 								{productMenuSmall && (
 									<div className="w-full cursor-pointer">
-										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
+										<p
+											className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold"
+											onClick={() => router.push(`/events`)}
+										>
 											<IconTicket size={24} color="#FF731C" className="w-10" />
 											Pipapo Ticket
 										</p>
@@ -356,12 +385,23 @@ const LandingNav = ({
 									<IconDown size={20} color="black" />
 								</div>
 								{developerMenuSmall && (
-									<div className="w-full cursor-pointer">
-										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
-											<IconGithub size={24} color="#FF731C" className="w-10" />
-											Github
-										</p>
-									</div>
+									<a href={URL_GITHUB} target={`_blank`}>
+										<div className="w-full cursor-pointer">
+											<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
+												<IconGithub
+													size={24}
+													color="#FF731C"
+													className="w-10"
+												/>
+												Github
+												<IconExternalLink
+													size={18}
+													color="black"
+													className="mx-1"
+												/>
+											</p>
+										</div>
+									</a>
 								)}
 							</div>
 							<div>
@@ -374,22 +414,51 @@ const LandingNav = ({
 								</div>
 								{communityMenuSmall && (
 									<div className="w-full cursor-pointer">
-										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
-											<IconDiscord size={24} color="#FF731C" className="w-10" />
-											Discord
-										</p>
-										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
-											<IconTelegram
-												size={24}
-												color="#FF731C"
-												className="w-10"
-											/>
-											Telegram
-										</p>
-										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
-											<IconTwitter size={24} color="#FF731C" className="w-10" />
-											Twitter
-										</p>
+										<a href={URL_DISCORD} target={`_blank`}>
+											<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
+												<IconDiscord
+													size={24}
+													color="#FF731C"
+													className="w-10"
+												/>
+												Discord
+												<IconExternalLink
+													size={18}
+													color="black"
+													className="mx-1"
+												/>
+											</p>
+										</a>
+										<a href={URL_TELEGRAM} target={`_blank`}>
+											<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
+												<IconTelegram
+													size={24}
+													color="#FF731C"
+													className="w-10"
+												/>
+												Telegram
+												<IconExternalLink
+													size={18}
+													color="black"
+													className="mx-1"
+												/>
+											</p>
+										</a>
+										<a href={URL_TWITTER} target={`_blank`}>
+											<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
+												<IconTwitter
+													size={24}
+													color="#FF731C"
+													className="w-10"
+												/>
+												Twitter
+												<IconExternalLink
+													size={18}
+													color="black"
+													className="mx-1"
+												/>
+											</p>
+										</a>
 									</div>
 								)}
 							</div>

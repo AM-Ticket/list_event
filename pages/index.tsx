@@ -38,7 +38,7 @@ export default function Home() {
 					Subscribe
 				</button>
 			</div>
-			<Footer />
+			<Footer activetab={activetab} setactivetab={setActivetab} />
 		</div>
 	)
 }
