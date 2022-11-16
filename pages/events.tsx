@@ -29,23 +29,23 @@ const events = () => {
 		},
 	]
 	// const { getEvents } = EventService()
-	const [data, setData] = useState<IFormSchema[] | undefined>([])
+	const [data, setData] = useState<IFormSchema[] | undefined>(undefined)
 	const [isRendering, setIsRendering] = useState<boolean>(true)
 	const [searchQuery, setSearchQuery] = useState('')
 	const [enterSearchQuery, setEnterSearchQuery] = useState(0)
 	const { getEvents: getEventsSWR } = EventService()
-	const [isLoading, setIsLoading] = useState(true)
+	// const [isLoading, setIsLoading] = useState(true)
 	const onEnterSearch = () => setEnterSearchQuery((prev) => prev + 1)
 
-	// const { data: _data, isValidating } = useSWR(
-	// 	enterSearchQuery === 0 && `event::all`,
-	// 	async () => await getEventsSWR(),
-	// 	{
-	// 		onSuccess: (data) => {
-	// 			setData(data)
-	// 		},
-	// 	}
-	// )
+	const { data: _data, isValidating } = useSWR(
+		enterSearchQuery === 0 && `event::all`,
+		async () => await getEventsSWR(),
+		{
+			onSuccess: (data) => {
+				setData(data)
+			},
+		}
+	)
 
 	const { data: __data, isValidating: isValidatingSearch } = useSWR(
 		enterSearchQuery !== 0 ? `event_search::${searchQuery}` : null,
@@ -60,17 +60,17 @@ const events = () => {
 		}
 	)
 
-	useEffect(() => {
-		setIsLoading(true)
-		async function fetcher() {
-			const res = await axios.get(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/events`
-			)
-			setData(res.data.data)
-			setIsLoading(false)
-		}
-		if (!isRendering) fetcher()
-	}, [isRendering])
+	// useEffect(() => {
+	// 	setIsLoading(true)
+	// 	async function fetcher() {
+	// 		const res = await axios.get(
+	// 			`${process.env.NEXT_PUBLIC_API_URL}/api/events`
+	// 		)
+	// 		setData(res.data.data)
+	// 		setIsLoading(false)
+	// 	}
+	// 	if (!isRendering) fetcher()
+	// }, [isRendering])
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -91,7 +91,7 @@ const events = () => {
 				<NavbarTop setSearchData={setSearchQuery} onKeyPress={onEnterSearch} />
 				<Filter filters={filterData} />
 				<div className="flex flex-col space-y-6">
-					{!data && (isLoading || isValidatingSearch) ? (
+					{isValidatingSearch || isValidating ? (
 						<EventListLoader />
 					) : (
 						data?.map((data, index) => {

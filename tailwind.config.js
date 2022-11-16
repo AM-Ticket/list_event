@@ -12,6 +12,7 @@ module.exports = {
 				textDark: '#393939',
 				textLight: `#969BAB`,
 				border: `#C4C4C6`,
+				footer: `#333333`,
 				neutral: {
 					0: '#1F1F1F',
 					25: '#8D8D8D',
@@ -21,7 +22,7 @@ module.exports = {
 			},
 		},
 		fontFamily: {
-			sans: ['Inter', 'sans-serif'],
+			sans: ['Rubik', 'sans-serif'],
 		},
 	},
 	plugins: [require('@tailwindcss/line-clamp')],

@@ -65,7 +65,10 @@ const NavSection = ({
 					<IconX size={18} color="#393939" />
 				</div>
 			)}
-			<div className="flex items-center mb-8 px-5">
+			<div
+				className="flex items-center mb-8 px-5 cursor-pointer"
+				onClick={() => router.push(`/`)}
+			>
 				<img
 					src="/pipapo.jpeg"
 					className="w-16 h-16 rounded-full object-contain"
@@ -261,7 +264,7 @@ const Nav = ({
 											else signOutRamper?.()
 											removeActiveWallet()
 											localStorage.removeItem('RAMPER_SIGNED_MSG')
-											location.replace('/')
+											location.replace('/events')
 										}}
 										color="primary"
 										size="lg"
