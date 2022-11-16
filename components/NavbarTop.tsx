@@ -53,7 +53,7 @@ const NavbarTop = ({
 				<div className="relative flex items-center">
 					<input
 						type="text"
-						placeholder="find event"
+						placeholder="find event or organizer"
 						className="appearance-none bg-white shadow-xl rounded-xl p-3 pl-10 w-[489px] h-12 focus:outline-none focus:border-textDark focus:ring-textDark"
 						onChange={(e) => setSearchData?.(e.target.value)}
 						onKeyPress={onKeyPress}

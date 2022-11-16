@@ -99,7 +99,7 @@ const EventItem = (props: EventItemProps) => {
 								<IconPrice size={25} color="#FF731C" className="mx-1" />
 								<p className="font-semibold flex items-center text-sm">
 									{props.data.minting_price}
-									<IconNear size={16} color="#393939" />
+									<IconNear size={14} color="#393939" className="mb-[1px]" />
 									{` `}~ $
 									{(
 										nearUsdPrice * ((props.data?.minting_price as number) || 0)
