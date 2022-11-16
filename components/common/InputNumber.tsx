@@ -6,7 +6,8 @@ interface IInputNumberProps
 		React.InputHTMLAttributes<HTMLInputElement>,
 		HTMLInputElement
 	> {
-	value?: string
+	value?: number
+	defaultValue?: number
 	onChange?: ChangeEventHandler<HTMLInputElement>
 	label?: string
 	isFullWidth?: boolean

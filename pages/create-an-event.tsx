@@ -56,8 +56,11 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 	} = useRamperProvider()
 	const [isLoadingSubmit, setIsLoadingSubmit] = useState<boolean>(false)
 	const { wallet, generateAuthToken } = useNear()
+	const accountId =
+		wallet?.account().accountId || userRamper?.wallets.near.publicKey || 'none'
 	const [nftImageFile, setNftImageFile] = useState<File | undefined>(undefined)
 	const [nftImageUrl, setNftImageUrl] = useState<string | undefined>(undefined)
+	const [royaltyValue, setRoyaltyValue] = useState(0)
 	const [showSubaccountExistToast, setShowSubaccountExistToast] =
 		useState(false)
 	const [thumbnailImageFile, setThumbnailImageFile] = useState<
@@ -209,6 +212,7 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 							minting_price: utils.format.parseNearAmount(
 								data.minting_price?.toString()
 							),
+							perpetual_royalties: { [accountId]: royaltyValue * 100 },
 						},
 						attachedDeposit: new BN(
 							utils.format.parseNearAmount('4') as string
@@ -236,6 +240,7 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 									minting_price: utils.format.parseNearAmount(
 										data.minting_price?.toString()
 									),
+									perpetual_royalties: { [accountId]: royaltyValue * 100 },
 								},
 								new BN(200000000000000),
 								new BN(utils.format.parseNearAmount('4') as string)
@@ -473,6 +478,20 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 								<InputNumber
 									{...register('minting_price', {
 										required: `Price must be filled and number`,
+									})}
+									isFullWidth
+								/>
+							</div>
+							<div>
+								<div>
+									<p className="font-semibold text-sm">Royalty %</p>
+								</div>
+								<InputNumber
+									value={royaltyValue}
+									{...register('royalty', {
+										required: `royalty is required`,
+										onChange: (event) =>
+											setRoyaltyValue(Math.min(event.target.value, 90)),
 									})}
 									isFullWidth
 								/>

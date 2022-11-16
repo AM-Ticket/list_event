@@ -42,7 +42,11 @@ const EventItem = (props: EventItemProps) => {
 	const { userRamper } = useRamperProvider()
 	const accountId = wallet?.getAccountId() || userRamper?.wallets.near.publicKey
 	const router = useRouter()
-	const { getIsOwnedEventTicketByUser, getEventTicketsByUser } = EventService()
+	const {
+		getIsOwnedEventTicketByUser,
+		getEventTicketsByUser,
+		getEventTotalSupply,
+	} = EventService()
 	const [isRedeemed, setIsRedeemed] = useState()
 	const { data: nftSupply } = useSWR(
 		props.data && accountId
@@ -73,6 +77,15 @@ const EventItem = (props: EventItemProps) => {
 				setIsRedeemed(_redeemed)
 			},
 		}
+	)
+
+	const { data: totalSupply } = useSWR(
+		props.data && accountId
+			? {
+					contractEvent: props.data.subaccount,
+			  }
+			: null,
+		getEventTotalSupply
 	)
 
 	return (
@@ -121,7 +134,9 @@ const EventItem = (props: EventItemProps) => {
 									<IconTicket size={25} color="#FF731C" />
 								</div>
 								<p className="text-xs font-semibold">
-									{props.data.num_of_guests} tickets
+									{parseInt(props.data?.num_of_guests as string) -
+										Number(totalSupply)}
+									/{props.data?.num_of_guests} tickets
 								</p>
 							</div>
 							<div className="flex flex-col items-center space-y-2">

@@ -20,6 +20,26 @@ export const EventService = () => {
 		return res.data.data
 	}
 
+	const getEventTotalSupply = async ({
+		contractEvent,
+	}: {
+		contractEvent: string
+	}) => {
+		const totalSupply =
+			getActiveWallet() === 'near-wallet'
+				? await wallet?.account().viewFunction({
+						contractId: contractEvent,
+						methodName: 'nft_total_supply',
+						args: {},
+				  })
+				: await viewFunction({
+						receiverId: contractEvent,
+						methodName: 'nft_total_supply',
+						args: {},
+				  })
+		return totalSupply
+	}
+
 	const getIsOwnedEventTicketByUser = async ({
 		contractEvent,
 		account_id,
@@ -76,5 +96,6 @@ export const EventService = () => {
 		getEvents,
 		getIsOwnedEventTicketByUser,
 		getEventTicketsByUser,
+		getEventTotalSupply,
 	}
 }
