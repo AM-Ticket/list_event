@@ -13,13 +13,18 @@ import moment from 'moment'
 import IconCalendar from '../icons/IconCalendar'
 import IconPlace from '../icons/IconPlace'
 import { useRamperProvider } from '../../contexts/RamperProvider'
+import IconTicket from '../icons/IconTicket'
 
 const Overview = ({ data }: { data?: IFormSchema }) => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)
 	const [showQRModal, setShowQRModal] = useState<boolean>(false)
 	const [isRedeemed, setIsRedeemed] = useState()
 	const router = useRouter()
-	const { getEventTicketsByUser, getIsOwnedEventTicketByUser } = EventService()
+	const {
+		getEventTicketsByUser,
+		getIsOwnedEventTicketByUser,
+		getEventTotalSupply,
+	} = EventService()
 	const { wallet } = useNear()
 	const { userRamper } = useRamperProvider()
 	const accountId = wallet?.getAccountId() || userRamper?.wallets.near.publicKey
@@ -51,6 +56,16 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 			},
 		}
 	)
+
+	const { data: totalSupply } = useSWR(
+		data && accountId
+			? {
+					contractEvent: data.subaccount,
+			  }
+			: null,
+		getEventTotalSupply
+	)
+
 	const nft = nfts?.filter(
 		(data) => data.metadata.title === router.query.eventId
 	)[0]
@@ -78,9 +93,6 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 					</div>
 				</div>
 				<div>
-					<p className="font-extrabold text-2xl text-textDark mb-2">
-						When and where
-					</p>
 					<div className="flex flex-wrap lg:flex-nowrap w-full space-x-0 lg:space-x-4">
 						<div className="flex space-x-4 w-full lg:w-6/12 py-2">
 							<div>
@@ -106,6 +118,21 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 								<p className="font-semibold">Location</p>
 								<p className="text-textDark text-opacity-40 text-sm">
 									{data?.event_location}
+								</p>
+							</div>
+						</div>
+						<div className="flex space-x-4 w-full lg:w-6/12 py-2">
+							<div>
+								<div className="rounded-xl p-2 md:p-4 bg-base flex items-center shadow-xl">
+									<IconTicket size={25} color="#FF731C" />
+								</div>
+							</div>
+							<div>
+								<p className="font-semibold">Tickets</p>
+								<p className="text-textDark text-opacity-40 text-sm">
+									{parseInt(data?.num_of_guests as string) -
+										Number(totalSupply)}
+									/{data?.num_of_guests}
 								</p>
 							</div>
 						</div>

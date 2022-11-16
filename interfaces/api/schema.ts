@@ -12,6 +12,7 @@ export interface IFormSchema {
 	owner_id?: string
 	payment_method: string[]
 	gallery_images: string[]
+	royalty?: number
 }
 
 export interface IPendingTicketSchema {
