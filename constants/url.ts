@@ -20,3 +20,8 @@ export const IMG_RAMPER_URL =
 	'http://res.cloudinary.com/dbcmvymir/image/upload/v1668260791/eftgjypwz8xtowozjadd.png'
 export const IMG_NEAR_URL =
 	'http://res.cloudinary.com/dbcmvymir/image/upload/v1668261070/k6fgeh5imbytqw73lbbz.png'
+export const URL_TWITTER = 'https://twitter.com/pipapo_io'
+export const URL_DISCORD = 'https://discord.gg/BtXvjcwm'
+export const URL_TELEGRAM = 'https://t.me/pipapo_io'
+export const URL_LINKEDIN = 'https://www.linkedin.com/company/amticket/'
+export const URL_NEAR = 'https://near.org/'

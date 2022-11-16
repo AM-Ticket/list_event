@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import Button from '../Button'
 import IconDashboard from '../icons/IconDashboard'
 import IconStar from '../icons/IconStar'
 import IconTicket from '../icons/IconTicket'
-import { CSSTransition } from 'react-transition-group'
 import IconGithub from '../icons/IconGithub'
 import IconDiscord from '../icons/IconDiscord'
 import IconTelegram from '../icons/IconTelegram'
@@ -12,6 +11,10 @@ import { useRouter } from 'next/router'
 import IconBurger from '../icons/IconBurger'
 import IconX from '../icons/IconX'
 import IconDown from '../icons/IconDown'
+import { Link } from 'react-scroll'
+import IconExternalLink from '../icons/IconExternalLink'
+import { URL_DISCORD, URL_TELEGRAM, URL_TWITTER } from '../../constants/url'
+import Emblem from '../Emblem'
 
 interface IMenu {
 	about: boolean
@@ -22,23 +25,45 @@ interface IMenu {
 
 type TMenu = 'about' | 'product' | 'developer' | 'community'
 
-const Dropdown = ({ type }: { type: TMenu }) => {
+const Dropdown = ({
+	type,
+	activetab,
+	setactivetab,
+}: {
+	type: TMenu
+	activetab: string
+	setactivetab: Dispatch<SetStateAction<string>>
+}) => {
+	const router = useRouter()
 	return (
 		<div className="absolute rounded-xl bg-white shadow-xl flex flex-col w-72 top-full left-0">
 			{type === 'about' && (
-				<>
-					<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-xl">
+				<Link
+					activeClass="active"
+					to={activetab}
+					spy={true}
+					smooth={true}
+					duration={250}
+					offset={-100}
+				>
+					<div
+						className="flex items-center justify-between w-full hover:bg-base p-4 rounded-xl"
+						onClick={() => setactivetab('vision')}
+					>
 						<IconStar size={24} color="#FF731C" className="w-3/12" />
 						<div className="text-textDark w-9/12">
 							<p className="font-semibold text-sm">Vision</p>
-							<p className="text-xs">The vision bring by Pipapo</p>
+							<p className="text-xs font-normal">The vision bring by Pipapo</p>
 						</div>
 					</div>
-				</>
+				</Link>
 			)}
 			{type === 'product' && (
 				<>
-					<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-t-xl">
+					<div
+						className="flex items-center justify-between w-full hover:bg-base p-4 rounded-t-xl"
+						onClick={() => router.push(`/events`)}
+					>
 						<IconTicket size={28} color="#FF731C" className="w-3/12" />
 						<div className="text-textDark w-9/12">
 							<p className="font-semibold text-sm">Pipapo Events</p>
@@ -50,7 +75,10 @@ const Dropdown = ({ type }: { type: TMenu }) => {
 					<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-b-xl">
 						<IconDashboard size={28} color="#FF731C" className="w-3/12" />
 						<div className="text-textDark w-9/12">
-							<p className="font-semibold text-sm">Pipapo Dashboard</p>
+							<p className="font-semibold text-sm flex items-center">
+								Pipapo Dashboard
+								<Emblem content="Upcoming" />
+							</p>
 							<p className="text-xs font-normal">
 								Provide organizer to analyze their selling
 							</p>
@@ -60,51 +88,93 @@ const Dropdown = ({ type }: { type: TMenu }) => {
 			)}
 			{type === 'developer' && (
 				<>
-					<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-t-xl">
-						<IconGithub size={28} color="#FF731C" className="w-3/12" />
-						<div className="text-textDark w-9/12">
-							<p className="font-semibold text-sm">Github</p>
-							<p className="text-xs font-normal">Discover our codebase</p>
+					<a href="https://github.com/AM-Ticket" target={`_blank`}>
+						<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-xl">
+							<IconGithub size={28} color="#FF731C" className="w-3/12" />
+							<div className="text-textDark w-9/12">
+								<p className="font-semibold text-sm flex items-center">
+									Github
+									<IconExternalLink
+										size={15}
+										color="#333333"
+										className="mx-1"
+									/>
+								</p>
+								<p className="text-xs font-normal">Discover our codebase</p>
+							</div>
 						</div>
-					</div>
+					</a>
 				</>
 			)}
 			{type === 'community' && (
 				<>
-					<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-t-xl">
-						<IconDiscord size={28} color="#FF731C" className="w-3/12" />
-						<div className="text-textDark w-9/12">
-							<p className="font-semibold text-sm">Discord</p>
-							<p className="text-xs font-normal">
-								Chat with our Pipapo supporters
-							</p>
+					<a href={URL_DISCORD} target={`_blank`}>
+						<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-t-xl">
+							<IconDiscord size={28} color="#FF731C" className="w-3/12" />
+							<div className="text-textDark w-9/12">
+								<p className="font-semibold text-sm flex items-center">
+									Discord
+									<IconExternalLink
+										size={15}
+										color="#333333"
+										className="mx-1"
+									/>
+								</p>
+								<p className="text-xs font-normal">
+									Chat with our Pipapo supporters
+								</p>
+							</div>
 						</div>
-					</div>
-					<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-t-xl">
-						<IconTelegram size={28} color="#FF731C" className="w-3/12" />
-						<div className="text-textDark w-9/12">
-							<p className="font-semibold text-sm">Telegram</p>
-							<p className="text-xs font-normal">
-								Connect with our developer to raise anything
-							</p>
+					</a>
+					<a href={URL_TELEGRAM} target={`_blank`}>
+						<div className="flex items-center justify-between w-full hover:bg-base p-4">
+							<IconTelegram size={28} color="#FF731C" className="w-3/12" />
+							<div className="text-textDark w-9/12">
+								<p className="font-semibold text-sm flex items-center">
+									Telegram
+									<IconExternalLink
+										size={15}
+										color="#333333"
+										className="mx-1"
+									/>
+								</p>
+								<p className="text-xs font-normal">
+									Connect with our developer to raise anything
+								</p>
+							</div>
 						</div>
-					</div>
-					<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-t-xl">
-						<IconTwitter size={28} color="#FF731C" className="w-3/12" />
-						<div className="text-textDark w-9/12">
-							<p className="font-semibold text-sm">Twitter</p>
-							<p className="text-xs font-normal">
-								Discover and get latest news abaout Pipapo
-							</p>
+					</a>
+					<a href={URL_TWITTER} target={`_blank`}>
+						<div className="flex items-center justify-between w-full hover:bg-base p-4 rounded-b-xl">
+							<IconTwitter size={28} color="#FF731C" className="w-3/12" />
+							<div className="text-textDark w-9/12">
+								<p className="font-semibold text-sm flex items-center">
+									Twitter
+									<IconExternalLink
+										size={15}
+										color="#333333"
+										className="mx-1"
+									/>
+								</p>
+								<p className="text-xs font-normal">
+									Discover and get latest news abaout Pipapo
+								</p>
+							</div>
 						</div>
-					</div>
+					</a>
 				</>
 			)}
 		</div>
 	)
 }
 
-const LandingNav = () => {
+const LandingNav = ({
+	activetab,
+	setactivetab,
+}: {
+	activetab: string
+	setactivetab: Dispatch<SetStateAction<string>>
+}) => {
 	const router = useRouter()
 	const [showSmallMenu, setShowSmallMenu] = useState<boolean>(false)
 	const [aboutMenuSmall, setAboutMenuSmall] = useState<boolean>(false)
@@ -148,7 +218,13 @@ const LandingNav = () => {
 							onMouseLeave={() => onMouseLeaveMenu('about')}
 						>
 							<p>About</p>
-							{dropdownNav.about && <Dropdown type={`about`} />}
+							{dropdownNav.about && (
+								<Dropdown
+									type={`about`}
+									activetab={activetab}
+									setactivetab={setactivetab}
+								/>
+							)}
 						</div>
 						<div
 							className="py-4 text-sm hover:text-primary transition cursor-pointer relative"
@@ -156,7 +232,13 @@ const LandingNav = () => {
 							onMouseLeave={() => onMouseLeaveMenu('product')}
 						>
 							<p>Product</p>
-							{dropdownNav.product && <Dropdown type={`product`} />}
+							{dropdownNav.product && (
+								<Dropdown
+									type={`product`}
+									activetab={activetab}
+									setactivetab={setactivetab}
+								/>
+							)}
 						</div>
 						<div
 							className="py-4 text-sm hover:text-primary transition cursor-pointer relative"
@@ -164,7 +246,13 @@ const LandingNav = () => {
 							onMouseLeave={() => onMouseLeaveMenu('developer')}
 						>
 							<p>Developers</p>
-							{dropdownNav.developer && <Dropdown type={`developer`} />}
+							{dropdownNav.developer && (
+								<Dropdown
+									type={`developer`}
+									activetab={activetab}
+									setactivetab={setactivetab}
+								/>
+							)}
 						</div>
 						<div
 							className="py-4 text-sm hover:text-primary transition cursor-pointer relative"
@@ -172,7 +260,13 @@ const LandingNav = () => {
 							onMouseLeave={() => onMouseLeaveMenu('community')}
 						>
 							<p>Community</p>
-							{dropdownNav.community && <Dropdown type={`community`} />}
+							{dropdownNav.community && (
+								<Dropdown
+									type={`community`}
+									activetab={activetab}
+									setactivetab={setactivetab}
+								/>
+							)}
 						</div>
 					</div>
 				</div>

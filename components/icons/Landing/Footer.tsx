@@ -1,3 +1,10 @@
+import {
+	URL_DISCORD,
+	URL_LINKEDIN,
+	URL_NEAR,
+	URL_TWITTER,
+} from '../../../constants/url'
+import IconNear from '../IconNear'
 import IconDiscordWhite from './IconDiscordWhite'
 import IconInstagramWhite from './IconInstagramWhite'
 import IconLinkedinWhite from './IconLinkedinWhite'
@@ -32,11 +39,23 @@ const Footer = () => {
 			</div>
 			<div className="col-span-12 lg:col-span-4 flex flex-col py-5">
 				<p className="font-semibold text-base mb-2">GET TO KNOW US</p>
-				<div className="flex items-center space-x-6">
+				<div className="flex items-center space-x-6 mb-6">
 					<IconInstagramWhite size={20} />
-					<IconTwitterWhite size={20} />
-					<IconDiscordWhite size={20} />
-					<IconLinkedinWhite size={20} />
+					<a href={URL_TWITTER} target="_blank">
+						<IconTwitterWhite size={20} />
+					</a>
+					<a href={URL_DISCORD} target={`_blank`}>
+						<IconDiscordWhite size={20} />
+					</a>
+					<a href={URL_LINKEDIN} target={`_blank`}>
+						<IconLinkedinWhite size={20} />
+					</a>
+				</div>
+				<div>
+					<p className="text-white text-sm">Powered by</p>
+					<a href={URL_NEAR} target={`_blank`}>
+						<IconNear size={30} color="white" />
+					</a>
 				</div>
 			</div>
 		</div>
