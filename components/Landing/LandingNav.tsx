@@ -207,7 +207,7 @@ const LandingNav = ({
 			<div className="fixed inset-x-0 py-4 bg-base hidden lg:flex items-center justify-around z-10">
 				<div className="flex items-center">
 					<img
-						src="/Pipapo-negative.png"
+						src="/pipapo-negative.png"
 						className="w-60 aspect-[5/1] object-contain rounded-xl"
 						alt=""
 					/>
