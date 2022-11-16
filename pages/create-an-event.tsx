@@ -27,6 +27,7 @@ import IconX from '../components/icons/IconX'
 import { useRamperProvider } from '../contexts/RamperProvider'
 import { BN } from 'bn.js'
 import Toast from '../components/Toast'
+import IconNear from '../components/icons/IconNear'
 
 interface IPaymentMethodCheckbox {
 	key: string
@@ -494,6 +495,7 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 											setRoyaltyValue(Math.min(event.target.value, 90)),
 									})}
 									isFullWidth
+									preffixIcon={<IconNear size={16} color="black" />}
 								/>
 							</div>
 							{/*
