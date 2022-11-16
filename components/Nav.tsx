@@ -261,7 +261,7 @@ const Nav = ({
 											else signOutRamper?.()
 											removeActiveWallet()
 											localStorage.removeItem('RAMPER_SIGNED_MSG')
-											location.replace('/')
+											location.replace('/events')
 										}}
 										color="primary"
 										size="lg"

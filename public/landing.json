@@ -1,0 +1,28 @@
+{
+  "why_us": [
+    {
+      "title": "Buy Tickets Easier",
+      "desc": "We make it easier for people to buy tickets"
+    },
+    {
+      "title": "Using NEP-171 NFT Collectibles",
+      "desc": "Making it impossible for people to clone or scam the ticket generated"
+    },
+    {
+      "title": "QR Code As Proof",
+      "desc": "We use a QR code as proof so event organizer can get accurate data on the number of event attendees"
+    },
+    {
+      "title": "Gift Tickets Easier",
+      "desc": "With us, it easier to gift tickets to other wallets"
+    },
+    {
+      "title": "Community-focused",
+      "desc": "We are community-focused and transparent"
+    },
+    {
+      "title": "Focusing on NEAR Community",
+      "desc": "We are focusing on NEAR community when they create events, EOs and  business owners whose products are subscriptions"
+    }
+  ]
+}
