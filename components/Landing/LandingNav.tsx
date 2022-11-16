@@ -312,7 +312,7 @@ const LandingNav = ({
 								</div>
 								{aboutMenuSmall && (
 									<div className="w-full cursor-pointer">
-										<p className="py-4 px-5 flex items-center cursor-pointer hover:text-neutral-25 text-sm">
+										<p className="py-4 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
 											<IconStar size={24} color="#FF731C" className="w-10" />
 											Vision
 										</p>
@@ -329,17 +329,20 @@ const LandingNav = ({
 								</div>
 								{productMenuSmall && (
 									<div className="w-full cursor-pointer">
-										<p className="py-2 px-5 flex items-center cursor-pointer hover:text-neutral-25 text-sm">
+										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
 											<IconTicket size={24} color="#FF731C" className="w-10" />
 											Pipapo Ticket
 										</p>
-										<p className="py-2 px-5 flex items-center cursor-pointer hover:text-neutral-25 text-sm">
+										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
 											<IconDashboard
 												size={24}
 												color="#FF731C"
 												className="w-10"
 											/>
 											Pipapo Dashboard
+											<div className="mx-1">
+												<Emblem content="Upcoming" />
+											</div>
 										</p>
 									</div>
 								)}
@@ -354,7 +357,7 @@ const LandingNav = ({
 								</div>
 								{developerMenuSmall && (
 									<div className="w-full cursor-pointer">
-										<p className="py-2 px-5 flex items-center cursor-pointer hover:text-neutral-25 text-sm">
+										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
 											<IconGithub size={24} color="#FF731C" className="w-10" />
 											Github
 										</p>
@@ -371,11 +374,11 @@ const LandingNav = ({
 								</div>
 								{communityMenuSmall && (
 									<div className="w-full cursor-pointer">
-										<p className="py-2 px-5 flex items-center cursor-pointer hover:text-neutral-25 text-sm">
+										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
 											<IconDiscord size={24} color="#FF731C" className="w-10" />
 											Discord
 										</p>
-										<p className="py-2 px-5 flex items-center cursor-pointer hover:text-neutral-25 text-sm">
+										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
 											<IconTelegram
 												size={24}
 												color="#FF731C"
@@ -383,7 +386,7 @@ const LandingNav = ({
 											/>
 											Telegram
 										</p>
-										<p className="py-2 px-5 flex items-center cursor-pointer hover:text-neutral-25 text-sm">
+										<p className="py-2 pl-2 flex items-center cursor-pointer hover:text-neutral-25 text-sm font-semibold">
 											<IconTwitter size={24} color="#FF731C" className="w-10" />
 											Twitter
 										</p>
