@@ -212,7 +212,7 @@ const LandingNav = ({
 				<div className="flex items-center">
 					<img
 						src="/pipapo-negative.png"
-						className="w-60 aspect-[5/1] object-contain rounded-xl"
+						className="w-32 object-contain rounded-xl mr-10"
 						alt=""
 					/>
 					<div className="flex items-center space-x-8 font-semibold text-base text-black">
@@ -288,7 +288,7 @@ const LandingNav = ({
 				<div className="flex w-full items-center justify-between px-4 z-20 bg-white py-3">
 					<img
 						src="/Pipapo-negative.png"
-						className="w-40 aspect-[4/1] object-contain rounded-xl"
+						className="w-32 object-contain rounded-xl"
 						alt=""
 					/>
 					<Button

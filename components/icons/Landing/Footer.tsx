@@ -71,7 +71,7 @@ const Footer = ({
 			<div className="col-span-12 lg:col-span-4 flex flex-col py-5">
 				<p className="font-semibold text-base mb-2">GET TO KNOW US</p>
 				<div className="flex items-center space-x-6 mb-6">
-					<IconInstagramWhite size={20} />
+					{/* <IconInstagramWhite size={20} /> */}
 					<a href={URL_TWITTER} target="_blank">
 						<IconTwitterWhite size={20} />
 					</a>
