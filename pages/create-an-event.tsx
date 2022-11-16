@@ -477,6 +477,7 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 									isFullWidth
 								/>
 							</div>
+							{/*
 							<div>
 								<div>
 									<p className="font-semibold text-sm mb-2">Payment Method</p>
@@ -501,6 +502,7 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 									</p>
 								)}
 							</div>
+							*/}
 							<div>
 								<p className="font-semibold text-sm mb-2">Gallery Images</p>
 								<div className="w-full border rounded-xl border-black p-4 grid grid-cols-2 md:grid-cols-3 gap-2">
