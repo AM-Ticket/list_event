@@ -85,16 +85,6 @@ const NavSection = ({
 					<IconEvents size={20} color="#FF731C" />
 					<p>Events</p>
 				</div>
-				{/* <div
-					className={clsx(
-						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
-						currTab.includes('publications') && `border-l-4 border-primary`
-					)}
-					onClick={() => handleClickTab(`publications`)}
-				>
-					<IconPublications size={20} color="#FF731C" />
-					<p>Publications</p>
-				</div> */}
 				<div
 					className={clsx(
 						`flex items-center text-textDark space-x-2 hover:bg-primary hover:bg-opacity-10 transition cursor-pointer p-3`,
@@ -155,39 +145,41 @@ const Nav = ({
 					>
 						<IconBurger size={20} color="black" />
 					</div>
-					<div
-						className="cursor-pointer"
-						onClick={() => setShowSearchbar((prev) => !prev)}
-					>
-						<IconSearch color="black" size={20} />
-					</div>
-					{showSearchbar && (
-						<>
-							<motion.input
-								type="text"
-								placeholder="find event"
-								className="absolute inset-x-0 appearance-none bg-white shadow-xl rounded-xl p-3 h-12 focus:outline-none focus:border-textDark focus:ring-textDark"
-								onChange={(e) => setSearchData?.(e.target.value)}
-								onKeyPress={onKeyPress}
-								initial={{ width: 0 }}
-								animate={{ width: `100%` }}
-								transition={{ duration: 0.7 }}
-							/>
-							<motion.div
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ duration: 1.4 }}
-								onClick={() => setShowSearchbar(false)}
-							>
-								<IconX
-									className="absolute right-4 top-6 cursor-pointer"
-									color="black"
-									size={18}
-								/>
-							</motion.div>
-						</>
+					{router.pathname === '/events' && (
+						<div
+							className="cursor-pointer"
+							onClick={() => setShowSearchbar((prev) => !prev)}
+						>
+							<IconSearch color="black" size={20} />
+						</div>
 					)}
 				</div>
+				{showSearchbar && (
+					<>
+						<motion.input
+							type="text"
+							placeholder="find event"
+							className="absolute inset-x-0 appearance-none bg-white shadow-xl rounded-xl p-3 h-12 focus:outline-none focus:border-textDark focus:ring-textDark z-20"
+							onChange={(e) => setSearchData?.(e.target.value)}
+							onKeyPress={onKeyPress}
+							initial={{ width: 0 }}
+							animate={{ width: `100%` }}
+							transition={{ duration: 0.7 }}
+						/>
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ duration: 1 }}
+							onClick={() => setShowSearchbar(false)}
+						>
+							<IconX
+								className="absolute right-4 top-5 cursor-pointer z-30"
+								color="black"
+								size={18}
+							/>
+						</motion.div>
+					</>
+				)}
 				<div className="flex">
 					{accountId ? (
 						<div className="relative flex">
