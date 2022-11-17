@@ -3,6 +3,7 @@ import Button from './Button'
 import NFTImage from './NFTImage'
 import { useState } from 'react'
 import QRModal from './QRModal'
+import TransferModal from './TransferModal'
 import { IMG_NFT_URL } from '../constants/url'
 import { useRouter } from 'next/router'
 import Tippy from '@tippyjs/react'
@@ -10,6 +11,7 @@ import IconInfo from './icons/IconInfo'
 
 export default function TicketModal(props) {
 	const [showQR, setShowQR] = useState<boolean>(false)
+	const [showTransferModal, setShowTransferModal] = useState<boolean>(false)
 	const router = useRouter()
 
 	return (
@@ -36,13 +38,22 @@ export default function TicketModal(props) {
 					</div>
 					<div>
 						{!props.redeemed ? (
-							<Button
-								color="black"
-								size="base"
-								onClickHandler={() => setShowQR(true)}
-							>
-								View QR COde
-							</Button>
+							<div className="flex gap-x-1">
+								<Button
+									color="primary"
+									size="base"
+									onClickHandler={() => setShowQR(true)}
+								>
+									Show QR
+								</Button>
+								<Button
+									color="black"
+									size="base"
+									onClickHandler={() => setShowTransferModal(true)}
+								>
+									Transfer
+								</Button>
+							</div>
 						) : (
 							<div className="flex items-center space-x-1">
 								<div className="bg-gray-200 text-gray-600 px-5 py-2 rounded-xl inline-block">
@@ -62,6 +73,11 @@ export default function TicketModal(props) {
 					</div>
 				</div>
 			</div>
+			<TransferModal
+				data={props.data}
+				isShow={showTransferModal}
+				onClose={() => setShowTransferModal(false)}
+			/>
 			<QRModal
 				tokenId={props.tokenId}
 				contractId={props.contractId}

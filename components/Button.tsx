@@ -4,7 +4,7 @@ import IconSpin from './icons/IconSpin'
 
 interface ButtonProps {
 	children: React.ReactNode
-	color: 'primary' | 'white' | 'black' | 'transparent' | 'base'
+	color: 'primary' | 'white' | 'black' | 'transparent' | 'base' | 'paras-blue'
 	rounded?: 'sm' | 'lg' | 'xl'
 	size?: 'sm' | 'base' | 'lg'
 	className?: string
@@ -35,6 +35,8 @@ const Button = (props: ButtonProps) => {
 			return `bg-transparent border-2 border-black text-black hover:text-opacity-60 hover:border-opactity-60`
 		else if (props.color === 'base')
 			return `bg-base text-black hover:bg-opacity-60`
+		else if (props.color === 'paras-blue')
+			return `bg-[#0000ba] text-white hover:bg-opacity-50`
 	}
 
 	return (

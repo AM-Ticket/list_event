@@ -22,6 +22,11 @@ export interface IPendingTicketSchema {
 	status: 'open' | 'redeemed'
 }
 
+export interface INearFaucetSchema {
+	account_id: string
+	issued_at: number
+}
+
 export enum EPaymentMethod {
 	bank_transfer = 'bank_transfer',
 	paypal = 'paypal',
