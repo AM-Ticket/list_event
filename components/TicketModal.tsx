@@ -3,6 +3,7 @@ import Button from './Button'
 import NFTImage from './NFTImage'
 import { useState } from 'react'
 import QRModal from './QRModal'
+import TransferModal from './TransferModal'
 import { IMG_NFT_URL } from '../constants/url'
 import { useRouter } from 'next/router'
 import Tippy from '@tippyjs/react'
@@ -10,6 +11,7 @@ import IconInfo from './icons/IconInfo'
 
 export default function TicketModal(props) {
 	const [showQR, setShowQR] = useState<boolean>(false)
+	const [showTransferModal, setShowTransferModal] = useState<boolean>(false)
 	const router = useRouter()
 
 	return (
@@ -47,7 +49,7 @@ export default function TicketModal(props) {
 								<Button
 									color="black"
 									size="base"
-									onClickHandler={() => setShowQR(true)}
+									onClickHandler={() => setShowTransferModal(true)}
 								>
 									Transfer
 								</Button>
@@ -71,6 +73,11 @@ export default function TicketModal(props) {
 					</div>
 				</div>
 			</div>
+			<TransferModal
+				data={props.data}
+				isShow={showTransferModal}
+				onClose={() => setShowTransferModal(false)}
+			/>
 			<QRModal
 				tokenId={props.tokenId}
 				contractId={props.contractId}
