@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import useSWR from 'swr'
@@ -6,17 +7,23 @@ import { IFormSchema } from '../../interfaces/api/schema'
 import { EventService } from '../../services/Event'
 import Button from '../Button'
 import BuyModal from '../BuyModal'
+import TransferModal from '../TransferModal'
 import IconLike from '../icons/IconLike'
 import IconShare from '../icons/IconShare'
 import QRModal from '../QRModal'
+import GiftModal from '../GiftModal'
 import moment from 'moment'
 import IconCalendar from '../icons/IconCalendar'
 import IconPlace from '../icons/IconPlace'
 import { useRamperProvider } from '../../contexts/RamperProvider'
 import IconTicket from '../icons/IconTicket'
+import IconGift from '../icons/Landing/IconGift'
 
 const Overview = ({ data }: { data?: IFormSchema }) => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)
+	const [showTransferModal, setShowTransferModal] = useState<boolean>(false)
+	const [showGiftModal, setShowGiftModal] = useState<boolean>(false)
+	const [currentNft, setCurrentNft] = useState(null)
 	const [showQRModal, setShowQRModal] = useState<boolean>(false)
 	const [isRedeemed, setIsRedeemed] = useState()
 	const router = useRouter()
@@ -52,6 +59,7 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 					(data) => data.metadata.title === router.query.eventId
 				)[0]
 				const redeemed = JSON.parse(`${nft.metadata.extra}`).attributes.redeemed
+				setCurrentNft(nft)
 				setIsRedeemed(redeemed)
 			},
 		}
@@ -153,19 +161,47 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 							>
 								Show QR
 							</Button>
+							<Button
+								color="black"
+								size="lg"
+								onClickHandler={() => setShowTransferModal(true)}
+							>
+								Transfer
+							</Button>
 						</>
 					)
 				) : (
-					<Button
-						color="primary"
-						size="lg"
-						onClickHandler={() => setShowBuyModal(true)}
-						isFullWidth
-					>
-						Buy
-					</Button>
+					<>
+						<Button
+							color="primary"
+							size="lg"
+							onClickHandler={() => setShowBuyModal(true)}
+							isFullWidth
+						>
+							Buy
+						</Button>
+						<Button
+							color="black"
+							size="lg"
+							prefixIcon={<IconGift size={20} className="mr-2" />}
+							onClickHandler={() => setShowGiftModal(true)}
+							isFullWidth
+						>
+							Gift
+						</Button>
+					</>
 				)}
 			</div>
+			<GiftModal
+				data={data}
+				isShow={showGiftModal}
+				onClose={() => setShowGiftModal(false)}
+			/>
+			<TransferModal
+				data={{ ...currentNft, subaccount: data?.subaccount }}
+				isShow={showTransferModal}
+				onClose={() => setShowTransferModal(false)}
+			/>
 			<BuyModal
 				data={data}
 				isShow={showBuyModal}

@@ -8,6 +8,7 @@ import CommonHead from '../../components/Head'
 import { GetServerSideProps } from 'next'
 import { getEvents } from '../../services/SSR'
 import { IFormSchema } from '../../interfaces/api/schema'
+import Button from '../../components/Button'
 
 const EventDetail = ({
 	events,
@@ -32,7 +33,19 @@ const EventDetail = ({
 					</div>
 					<div className="flex flex-wrap space-y-8 md:space-y-0 space-x-2 md:space-x-8 mb-8">
 						<div className="w-full md:w-4/12">
-							<NFTImage data={eventData} image={eventData?.nft_image} />
+							<div>
+								<NFTImage data={eventData} image={eventData?.nft_image} />
+							</div>
+							<div className="mt-2">
+								<a
+									className="w-full"
+									href={`${process.env.NEXT_PUBLIC_PARAS_URL}/collection/${eventData?.subaccount}`}
+								>
+									<Button color="transparent" size="lg" isFullWidth>
+										View on Paras
+									</Button>
+								</a>
+							</div>
 						</div>
 						<div className="w-full md:w-7/12">
 							<Overview data={eventData} />

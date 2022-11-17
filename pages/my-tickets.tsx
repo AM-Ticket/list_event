@@ -98,7 +98,7 @@ const MyTickets = () => {
 										'true'
 									return (
 										<TicketModal
-											data={nft}
+											data={{ ...nft, subaccount: contractId }}
 											tokenId={nft.token_id}
 											contractId={contractId}
 											redeemed={isRedeemed}

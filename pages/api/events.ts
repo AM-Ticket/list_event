@@ -20,9 +20,11 @@ export default async function events(
 						{ title: new RegExp(search as string, 'i') },
 						{ organizer_name: new RegExp(search as string, 'i') },
 					],
-				}).exec()
+				})
+					.sort({ _id: -1 })
+					.exec()
 			} else {
-				data = await FormModel.find()
+				data = await FormModel.find().sort({ _id: -1 })
 			}
 			res.json({
 				status: res.statusCode,
