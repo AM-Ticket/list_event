@@ -178,6 +178,13 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 						Buy
 					</Button>
 				)}
+				<a
+					href={`${process.env.NEXT_PUBLIC_PARAS_URL}/collection/${data?.subaccount}`}
+				>
+					<Button color="paras-blue" size="lg" isFullWidth>
+						Trade on Paras
+					</Button>
+				</a>
 			</div>
 			<BuyModal
 				data={data}
