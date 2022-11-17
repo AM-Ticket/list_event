@@ -55,6 +55,7 @@ export default async function events(
 				owner_id: accountId,
 				payment_method: validatedPaymentMethod,
 				gallery_images: req.body.gallery_images,
+				position: JSON.parse(`${req.body.position}`),
 			})
 			await doc.validateSync()
 			await doc.save()

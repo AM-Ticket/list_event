@@ -13,6 +13,10 @@ export interface IFormSchema {
 	payment_method: string[]
 	gallery_images: string[]
 	royalty?: number
+	position: {
+		long: string
+		lat: string
+	}
 }
 
 export interface IPendingTicketSchema {

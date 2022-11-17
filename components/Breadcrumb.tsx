@@ -4,8 +4,8 @@ import IconLeft from './icons/IconLeft'
 const Breadcrumb = ({ data }: { data: { path: string; label: string }[] }) => {
 	return (
 		<div className="rounded-xl bg-white py-2 px-3 flex items-center space-x-2 w-max shadow-xl">
-			{data.map((datum) => (
-				<div className="flex items-center space-x-1">
+			{data.map((datum, index) => (
+				<div key={index} className="flex items-center space-x-1">
 					<IconLeft size={16} color="#393939" />
 					<Link
 						href={datum.path}

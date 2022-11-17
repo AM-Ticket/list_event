@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import InputNew from '../components/common/InputNew'
 import CommonHead from '../components/Head'
 import Nav from '../components/Nav'
@@ -28,11 +28,23 @@ import { useRamperProvider } from '../contexts/RamperProvider'
 import { BN } from 'bn.js'
 import Toast from '../components/Toast'
 import IconNear from '../components/icons/IconNear'
+import GoogleMapReact from 'google-map-react'
+import {
+	useJsApiLoader,
+	GoogleMap,
+	Marker,
+	Autocomplete,
+} from '@react-google-maps/api'
 
 interface IPaymentMethodCheckbox {
 	key: string
 	title: string
 	checked: boolean
+}
+
+interface IPosition {
+	long: number
+	lat: number
 }
 
 const ConfirmModalContent = () => (
@@ -78,6 +90,17 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 			checked: false,
 		}))
 	)
+	const [position, setPosition] = useState<IPosition | undefined>({
+		lat: -6.220556015459309,
+		long: 106.79381606219681,
+	})
+	const [map, setMap] = useState<google.maps.Map | null>(null)
+	const [autoCompleteObj, setAutoCompleteObj] = useState()
+	const { isLoaded } = useJsApiLoader({
+		googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_KEY as string,
+		libraries: ['places'],
+	})
+	const [formattedAddress, setFormattedAddress] = useState('')
 	const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
 	const [gallery, setGallery] = useState<string[]>([...Array(6)].map(() => ''))
 	const { upload } = CloudinaryService()
@@ -178,7 +201,7 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 				description: data.description,
 				thumbnail_image: resThumbnailUrl.secure_url,
 				event_date: data.event_date,
-				event_location: data.event_location,
+				event_location: formattedAddress || data.event_location,
 				nft_image: resNftUrl.secure_url,
 				subaccount: `${data.subaccount}.${process.env.NEXT_PUBLIC_CONTRACT_NAME}`,
 				num_of_guests: data.num_of_guests,
@@ -189,6 +212,7 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 				gallery_images: gallery.every((data) => !data)
 					? []
 					: gallery.filter((data) => data),
+				position: JSON.stringify(position),
 			}),
 		})
 
@@ -246,33 +270,6 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 								new BN(200000000000000),
 								new BN(utils.format.parseNearAmount('4') as string)
 							),
-
-							// {
-							// 	// @ts-ignore
-							// 	type: 'FunctionCall',
-							// 	params: {
-							// 		methodName: 'create',
-							// 		args: {
-							// 			subaccount: data.subaccount,
-							// 			metadata: {
-							// 				spec: 'nft-1.0.0',
-							// 				name: data.title,
-							// 				symbol: data.title,
-							// 			},
-							// 			token_metadata: {
-							// 				title: data.title,
-							// 				description: data.description,
-							// 				media: resNftUrl.url,
-							// 				copies: Number(data.num_of_guests),
-							// 			},
-							// 			minting_price: utils.format.parseNearAmount(
-							// 				data.minting_price?.toString()
-							// 			),
-							// 		},
-							// 		attachedDeposit: utils.format.parseNearAmount('4'),
-							// 		gas: 200000000000000,
-							// 	},
-							// },
 						],
 				  })
 		}
@@ -378,12 +375,57 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 						</div>
 						<div className="w-full md:w-6/12 flex flex-col space-y-4">
 							<InputDate {...register('event_date')} isFullWidth />
-							<InputNew
-								{...register('event_location')}
-								preffixIcon={<IconPlace size={16} color="black" />}
-								placeholder="Event location"
-								isFullWidth
-							/>
+							{typeof window !== 'undefined' && window.google && (
+								<Autocomplete
+									// @ts-ignore
+									onLoad={(autoComplete) => setAutoCompleteObj(autoComplete)}
+									onPlaceChanged={() => {
+										// @ts-ignore
+										const place = autoCompleteObj?.getPlace()
+										if (place.geometry) {
+											map?.panTo({
+												lat: Number(place.geometry.location.lat()),
+												lng: Number(place.geometry.location.lng()),
+											})
+											map?.setZoom(15)
+											setPosition({
+												lat: place.geometry.location.lat(),
+												long: place.geometry.location.lng(),
+											})
+											setFormattedAddress(place.formatted_address)
+										} else setFormattedAddress(place.name)
+									}}
+								>
+									<InputNew
+										{...register('event_location')}
+										preffixIcon={<IconPlace size={16} color="black" />}
+										placeholder="Event location"
+										isFullWidth
+									/>
+								</Autocomplete>
+							)}
+							<div className="w-full h-[280px]">
+								{typeof window !== 'undefined' && window.google && (
+									<GoogleMap
+										center={{
+											lat: Number(position?.lat) || -6.220556015459309,
+											lng: Number(position?.long) || 106.79381606219681,
+										}}
+										zoom={12}
+										mapContainerStyle={{ width: `100%`, height: `100%` }}
+										onLoad={(map) => setMap(map)}
+									>
+										<>
+											<Marker
+												position={{
+													lat: Number(position?.lat) || -6.220556015459309,
+													lng: Number(position?.long) || 106.79381606219681,
+												}}
+											/>
+										</>
+									</GoogleMap>
+								)}
+							</div>
 							<div>
 								<div>
 									<p className="font-semibold text-sm">
@@ -458,20 +500,25 @@ const CreateAnEvent = ({ events }: { events: IFormSchema[] }) => {
 							{errors.nft_image !== undefined && (
 								<p className="text-red-500 text-xs">NFT image must be filled</p>
 							)}
-							<InputNew
-								{...register('subaccount', {
-									required: true,
-									pattern: /^[-_a-zA-Z0-9]+$/,
-								})}
-								placeholder="Sub account"
-								isFullWidth
-								isError={errors.subaccount !== undefined}
-								errorMessage={
-									errors.subaccount?.type === 'pattern'
-										? `Only allows A-z, 1-9, -, and _ characters`
-										: `Subaccount must be filled`
-								}
-							/>
+							<div>
+								<div>
+									<p className="font-semibold text-sm">Sub account</p>
+								</div>
+								<InputNew
+									{...register('subaccount', {
+										required: true,
+										pattern: /^[-_a-zA-Z0-9]+$/,
+									})}
+									placeholder="Sub account"
+									isFullWidth
+									isError={errors.subaccount !== undefined}
+									errorMessage={
+										errors.subaccount?.type === 'pattern'
+											? `Only allows A-z, 1-9, -, and _ characters`
+											: `Subaccount must be filled`
+									}
+								/>
+							</div>
 							<div>
 								<div>
 									<p className="font-semibold text-sm">Price</p>

@@ -3,9 +3,6 @@ import Nav from '../../components/Nav'
 import NFTImage from '../../components/NFTImage'
 import Overview from '../../components/EventDetail/Overview'
 import Location from '../../components/EventDetail/Location'
-import { EventService } from '../../services/Event'
-import useSWR from 'swr'
-import { useRouter } from 'next/router'
 import Breadcrumb from '../../components/Breadcrumb'
 import CommonHead from '../../components/Head'
 import { GetServerSideProps } from 'next'
@@ -29,13 +26,6 @@ const EventDetail = ({
 			<div className="w-[320px] min-h-screen hidden lg:block" />
 			<div className="flex flex-col flex-1 p-2 lg:p-6 pt-20">
 				<NavbarTop />
-				{/* <div className="w-full bg-primary rounded-none md:rounded-xl h-[300px] mb-4 md:mb-8">
-					<img
-						src={eventData.thumbnail_image}
-						className="object-contain w-full h-full"
-						alt=""
-					/>
-				</div> */}
 				<div className="w-full lg:w-11/12 p-2 md:p-6">
 					<div className="mb-6">
 						<Breadcrumb data={breadCrumbData} />
@@ -52,7 +42,7 @@ const EventDetail = ({
 						<Roadmap />
 					</div> */}
 					<div className="flex mb-8 w-full">
-						<Location />
+						<Location data={eventData} />
 					</div>
 				</div>
 			</div>

@@ -111,19 +111,6 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 						<div className="flex space-x-4 w-full lg:w-6/12 py-2">
 							<div>
 								<div className="rounded-xl p-2 md:p-4 bg-base flex items-center shadow-xl">
-									<IconPlace size={25} color="#FF731C" />
-								</div>
-							</div>
-							<div>
-								<p className="font-semibold">Location</p>
-								<p className="text-textDark text-opacity-40 text-sm">
-									{data?.event_location}
-								</p>
-							</div>
-						</div>
-						<div className="flex space-x-4 w-full lg:w-6/12 py-2">
-							<div>
-								<div className="rounded-xl p-2 md:p-4 bg-base flex items-center shadow-xl">
 									<IconTicket size={25} color="#FF731C" />
 								</div>
 							</div>

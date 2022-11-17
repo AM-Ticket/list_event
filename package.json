@@ -10,7 +10,9 @@
 		"lint": "eslint ./ --ext js,jsx,ts,tsx"
 	},
 	"dependencies": {
+		"@googlemaps/react-wrapper": "^1.1.35",
 		"@ramper/near": "^0.0.28",
+		"@react-google-maps/api": "^2.17.0",
 		"@tailwindcss/line-clamp": "^0.4.2",
 		"@tippyjs/react": "^4.2.6",
 		"axios": "^1.1.3",
@@ -46,6 +48,7 @@
 	"devDependencies": {
 		"@types/bn.js": "^5.1.1",
 		"@types/google-map-react": "^2.1.7",
+		"@types/googlemaps": "^3.43.3",
 		"@types/node": "^18.11.9",
 		"@types/react": "^18.0.24",
 		"@types/react-datepicker": "^4.8.0",
