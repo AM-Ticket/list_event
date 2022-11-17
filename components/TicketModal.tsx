@@ -36,13 +36,22 @@ export default function TicketModal(props) {
 					</div>
 					<div>
 						{!props.redeemed ? (
-							<Button
-								color="black"
-								size="base"
-								onClickHandler={() => setShowQR(true)}
-							>
-								View QR COde
-							</Button>
+							<div className="flex gap-x-1">
+								<Button
+									color="primary"
+									size="base"
+									onClickHandler={() => setShowQR(true)}
+								>
+									Show QR
+								</Button>
+								<Button
+									color="black"
+									size="base"
+									onClickHandler={() => setShowQR(true)}
+								>
+									Transfer
+								</Button>
+							</div>
 						) : (
 							<div className="flex items-center space-x-1">
 								<div className="bg-gray-200 text-gray-600 px-5 py-2 rounded-xl inline-block">

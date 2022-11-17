@@ -14,6 +14,7 @@ import IconCalendar from '../icons/IconCalendar'
 import IconPlace from '../icons/IconPlace'
 import { useRamperProvider } from '../../contexts/RamperProvider'
 import IconTicket from '../icons/IconTicket'
+import IconGift from '../icons/Landing/IconGift'
 
 const Overview = ({ data }: { data?: IFormSchema }) => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)
@@ -166,25 +167,31 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 							>
 								Show QR
 							</Button>
+							<Button color="black" size="lg" isFullWidth>
+								Transfer
+							</Button>
 						</>
 					)
 				) : (
-					<Button
-						color="primary"
-						size="lg"
-						onClickHandler={() => setShowBuyModal(true)}
-						isFullWidth
-					>
-						Buy
-					</Button>
+					<>
+						<Button
+							color="primary"
+							size="lg"
+							onClickHandler={() => setShowBuyModal(true)}
+							isFullWidth
+						>
+							Buy
+						</Button>
+						<Button
+							color="black"
+							size="lg"
+							prefixIcon={<IconGift size={20} className="mr-2" />}
+							isFullWidth
+						>
+							Gift
+						</Button>
+					</>
 				)}
-				<a
-					href={`${process.env.NEXT_PUBLIC_PARAS_URL}/collection/${data?.subaccount}`}
-				>
-					<Button color="paras-blue" size="lg" isFullWidth>
-						Trade on Paras
-					</Button>
-				</a>
 			</div>
 			<BuyModal
 				data={data}
