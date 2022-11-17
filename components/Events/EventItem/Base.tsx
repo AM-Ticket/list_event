@@ -80,7 +80,7 @@ const EventItem = (props: EventItemProps) => {
 	)
 
 	const { data: totalSupply } = useSWR(
-		props.data && accountId
+		props.data
 			? {
 					contractEvent: props.data.subaccount,
 			  }

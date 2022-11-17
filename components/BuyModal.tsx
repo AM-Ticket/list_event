@@ -85,7 +85,9 @@ const BuyModal = (props: BuyModalProps) => {
 								`absolute top-12 -ml-3 flex flex-col items-center underline hover:text-opacity-60`,
 								accountId ? `pointer-events-none` : `cursor-pointer`
 							)}
-							onClick={() => router.push('https://wallet.near.org')}
+							onClick={() =>
+								router.push('https://wallet.testnet.near.org/create')
+							}
 						>
 							<p className={clsx(`font-semibold`)}>Connect wallet</p>
 						</div>

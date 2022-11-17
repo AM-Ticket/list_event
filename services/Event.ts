@@ -25,18 +25,11 @@ export const EventService = () => {
 	}: {
 		contractEvent: string
 	}) => {
-		const totalSupply =
-			getActiveWallet() === 'near-wallet'
-				? await wallet?.account().viewFunction({
-						contractId: contractEvent,
-						methodName: 'nft_total_supply',
-						args: {},
-				  })
-				: await viewFunction({
-						receiverId: contractEvent,
-						methodName: 'nft_total_supply',
-						args: {},
-				  })
+		const totalSupply = await viewFunction({
+			receiverId: contractEvent,
+			methodName: 'nft_total_supply',
+			args: {},
+		})
 		return totalSupply
 	}
 
