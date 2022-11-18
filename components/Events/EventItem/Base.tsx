@@ -62,8 +62,9 @@ const EventItem = (props: EventItemProps) => {
 				const nft = data?.filter(
 					(data) => data.metadata.title === props.data.title
 				)[0]
-				const _redeemed = JSON.parse(`${nft.metadata.extra}`).attributes
-					.redeemed
+				const _redeemed =
+					JSON.parse(`${nft.metadata.extra}`).attributes.redeemed ||
+					JSON.parse(`${nft.metadata.extra}`).attributes[0].value
 				setIsRedeemed(_redeemed)
 			},
 		}

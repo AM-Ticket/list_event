@@ -94,8 +94,10 @@ const MyTickets = () => {
 							Object.keys(ownedTicketList).map((contractId) => {
 								return ownedTicketList[contractId].map((nft) => {
 									const isRedeemed =
-										JSON.parse(nft.metadata.extra).attributes.redeemed ===
-										'true'
+										JSON.parse(nft.metadata.extra).attributes?.redeemed ===
+											'true' ||
+										JSON.parse(nft.metadata.extra).attributes[0]?.value ===
+											'true'
 									return (
 										<TicketModal
 											data={{ ...nft, subaccount: contractId }}

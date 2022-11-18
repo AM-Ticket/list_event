@@ -59,7 +59,9 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 				const nft = data?.filter(
 					(data) => data.metadata.title === router.query.eventId
 				)[0]
-				const redeemed = JSON.parse(`${nft.metadata.extra}`).attributes.redeemed
+				const redeemed =
+					JSON.parse(`${nft.metadata.extra}`).attributes.redeemed ||
+					JSON.parse(`${nft.metadata.extra}`).attributes[0].value
 				setCurrentNft(nft)
 				setIsRedeemed(redeemed)
 			},

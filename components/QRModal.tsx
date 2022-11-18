@@ -2,11 +2,11 @@
 import IconX from './icons/IconX'
 import Modal from './Modal'
 import QRCode from 'react-qr-code'
-import { useInterval } from '../hooks/useInterval'
-import axios from 'axios'
 import { useNear } from '../contexts/near'
 import { useRamperProvider } from '../contexts/RamperProvider'
 import { getActiveWallet } from '../db/utils/common'
+import useSWR from 'swr'
+import { TicketService } from '../services/Ticket'
 
 interface QRModalProps {
 	isShow: boolean
@@ -20,15 +20,21 @@ interface QRModalProps {
 const QRModal = (props: QRModalProps) => {
 	const { wallet } = useNear()
 	const { signAndSendTransactions } = useRamperProvider()
-	useInterval(() => {
-		if (props.isShow) {
-			let pendingTicket = null
-			const getPendingTicket = async () => {
-				pendingTicket = await axios.get('/api/ticket', {
-					params: { token_id: props.tokenId, contract_id: props.contractId },
-				})
-
-				if (pendingTicket.data.data.status === 'open') {
+	const { getTicketData } = TicketService()
+	const {} = useSWR(
+		props.isShow && `ticket::${props.contractId}::${props.tokenId}`,
+		async (key: string) => {
+			const [contract_id, token_id] = key.split('::').slice(1)
+			return await getTicketData({
+				token_id,
+				contract_id,
+			})
+		},
+		{
+			refreshInterval: 1000,
+			onSuccess: async (data) => {
+				console.log(data)
+				if (data.status === 'open') {
 					getActiveWallet() === 'near-wallet'
 						? await wallet?.account().functionCall({
 								contractId: props.contractId,
@@ -50,11 +56,46 @@ const QRModal = (props: QRModalProps) => {
 									),
 								],
 						  })
-				}
-			}
-			getPendingTicket().catch(console.error)
+				} else return
+			},
+			onError: (err) => console.log(err),
 		}
-	}, 1500)
+	)
+	// useInterval(() => {
+	// 	if (props.isShow) {
+	// 		let pendingTicket = null
+	// 		const getPendingTicket = async () => {
+	// 			pendingTicket = await axios.get('/api/ticket', {
+	// 				params: { token_id: props.tokenId, contract_id: props.contractId },
+	// 			})
+
+	// 			if (pendingTicket.data.data.status === 'open') {
+	// 				getActiveWallet() === 'near-wallet'
+	// 					? await wallet?.account().functionCall({
+	// 							contractId: props.contractId,
+	// 							methodName: 'redeem_nft',
+	// 							args: {
+	// 								token_id: props.tokenId,
+	// 							},
+	// 							attachedDeposit: 1,
+	// 							gas: 200000000000000,
+	// 					  })
+	// 					: await signAndSendTransactions({
+	// 							receiverId: props.contractId,
+	// 							actions: [
+	// 								transactions.functionCall(
+	// 									'redeem_nft',
+	// 									{ token_id: props.tokenId },
+	// 									new BN(200000000000000),
+	// 									new BN(1)
+	// 								),
+	// 							],
+	// 					  })
+	// 			}
+	// 		}
+	// 		getPendingTicket().catch(console.error)
+	// 	}
+	// }, 500)
 
 	return (
 		<Modal isShow={props.isShow} onClose={props.onClose}>

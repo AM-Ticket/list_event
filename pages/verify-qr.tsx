@@ -11,6 +11,7 @@ import Toast from '../components/Toast'
 import Loading from '../components/Loading'
 import { getActiveWallet } from '../db/utils/common'
 import { useRamperProvider } from '../contexts/RamperProvider'
+import useSWR from 'swr'
 
 const VerifyQR = () => {
 	const [selected, setSelected] = useState('environment')
@@ -92,7 +93,8 @@ const VerifyQR = () => {
 								args: { token_id: tokenId },
 						  })
 				const redeemed =
-					JSON.parse(token?.metadata.extra).attributes.redeemed === 'true'
+					JSON.parse(token?.metadata.extra).attributes.redeemed === 'true' ||
+					JSON.parse(token?.metadata.extra)?.attributes[0]?.value === 'true'
 				if (redeemed === true) {
 					const authToken =
 						getActiveWallet() === 'near-wallet'
