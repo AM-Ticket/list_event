@@ -147,7 +147,7 @@ const EventItem = (props: EventItemProps) => {
 								</div>
 								<p className="text-xs font-semibold flex items-center">
 									<span className="inline md:hidden">
-										{prettyTruncate(props.data.organizer_name, 10)}
+										{prettyTruncate(props.data.organizer_name, 5)}
 									</span>
 									<span className="hidden md:inline">
 										{prettyTruncate(props.data.organizer_name, 15)}
