@@ -105,7 +105,7 @@ const EventItem = (props: EventItemProps) => {
 										'Free'
 									) : (
 										<>
-											props.data.minting_price
+											{props.data.minting_price}
 											<IconNear
 												size={14}
 												color="#393939"
