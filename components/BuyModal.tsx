@@ -99,7 +99,7 @@ const BuyModal = (props: BuyModalProps) => {
 						{accountId && (
 							<div className="flex justify-center">
 								<Button size="base" color={`primary`} onClickHandler={onBuyNFT}>
-									Buy Now
+									{props?.data?.minting_price === 0 ? 'Claim Now' : 'Buy Now'}
 								</Button>
 							</div>
 						)}

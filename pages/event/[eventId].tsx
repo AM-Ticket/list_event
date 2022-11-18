@@ -51,9 +51,6 @@ const EventDetail = ({
 							<Overview data={eventData} />
 						</div>
 					</div>
-					{/* <div className="flex mb-8">
-						<Roadmap />
-					</div> */}
 					<div className="flex mb-8 w-full">
 						<Location data={eventData} />
 					</div>

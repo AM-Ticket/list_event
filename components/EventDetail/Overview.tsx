@@ -181,7 +181,7 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 							onClickHandler={() => setShowBuyModal(true)}
 							isFullWidth
 						>
-							Buy
+							{data?.minting_price === 0 ? 'Claim' : 'Buy'}
 						</Button>
 						<Button
 							color="black"
