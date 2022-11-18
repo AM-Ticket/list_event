@@ -11,7 +11,9 @@ import { GetServerSideProps } from 'next'
 export default function Home() {
 	// const [activetab, setActivetab] = useState('main')
 	return (
-		<div></div>
+		<>
+			<CommonHead image={`/pipapo.jpeg`} />
+		</>
 		// <div className="max-w-[2560px] w-full bg-base min-h-screen">
 		// 	<CommonHead image={`/pipapo.jpeg`} />
 		// 	<LandingNav activetab={activetab} setactivetab={setActivetab} />

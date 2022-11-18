@@ -22,7 +22,7 @@ const EventDetail = ({
 	const eventData = events.filter((data) => data.title === eventId)[0]
 	return (
 		<div className="max-w-[2560px] w-full bg-base min-h-screen flex">
-			<CommonHead title={eventData.title} image={`/pipapo.jpeg`} />
+			<CommonHead title={eventData.title} image={eventData.nft_image} />
 			<Nav />
 			<div className="w-[320px] min-h-screen hidden lg:block" />
 			<div className="flex flex-col flex-1 p-2 lg:p-6 pt-20">

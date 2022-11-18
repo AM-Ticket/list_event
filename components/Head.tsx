@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { IMG_PIPAPO_URL } from '../constants/url'
 
 interface HeadProps {
 	title?: string
@@ -13,8 +14,8 @@ const DEFAULT_TITLE = 'Pipapo - Your NFT Ticketing Platform'
 const CommonHead = ({
 	title = DEFAULT_TITLE,
 	description = 'Buy, Own, Redeem your NFT Ticket',
-	image = '',
-	url = 'https://pipapo.xyz',
+	image = IMG_PIPAPO_URL,
+	url = 'https://pipapo.io',
 	keywords = 'ticket, nft, qrcode',
 }: HeadProps) => {
 	const _title = title ? `${title} - Pipapo` : DEFAULT_TITLE
