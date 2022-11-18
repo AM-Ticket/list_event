@@ -157,7 +157,7 @@ const VerifyQR = () => {
 					</p>
 					<div className="w-8/12">
 						{scanData.text}
-						<QrReader facingMode={selected} delay={500} onResult={handleScan} />
+						<QrReader facingMode={selected} onResult={handleScan} />
 					</div>
 					{/* )} */}
 				</div>
