@@ -14,10 +14,10 @@ import QRModal from '../QRModal'
 import GiftModal from '../GiftModal'
 import moment from 'moment'
 import IconCalendar from '../icons/IconCalendar'
-import IconPlace from '../icons/IconPlace'
 import { useRamperProvider } from '../../contexts/RamperProvider'
 import IconTicket from '../icons/IconTicket'
 import IconGift from '../icons/Landing/IconGift'
+import ShareModal from '../ShareModal'
 
 const Overview = ({ data }: { data?: IFormSchema }) => {
 	const [showBuyModal, setShowBuyModal] = useState<boolean>(false)
@@ -25,6 +25,7 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 	const [showGiftModal, setShowGiftModal] = useState<boolean>(false)
 	const [currentNft, setCurrentNft] = useState(null)
 	const [showQRModal, setShowQRModal] = useState<boolean>(false)
+	const [shareModal, setShareModal] = useState<boolean>(false)
 	const [isRedeemed, setIsRedeemed] = useState()
 	const router = useRouter()
 	const {
@@ -66,7 +67,7 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 	)
 
 	const { data: totalSupply } = useSWR(
-		data && accountId
+		data
 			? {
 					contractEvent: data.subaccount,
 			  }
@@ -97,7 +98,9 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 					</p>
 					<div className="flex items-center space-x-2">
 						<IconLike size={20} color="#FF731C" />
-						<IconShare size={20} color="#FF731C" />
+						<div className="cursor-pointer" onClick={() => setShareModal(true)}>
+							<IconShare size={20} color="#FF731C" />
+						</div>
 					</div>
 				</div>
 				<div>
@@ -214,6 +217,11 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 				title={data?.title as string}
 				isShow={showQRModal}
 				onClose={() => setShowQRModal(false)}
+			/>
+			<ShareModal
+				isShow={shareModal}
+				onClose={() => setShareModal(false)}
+				data={data}
 			/>
 		</div>
 	)

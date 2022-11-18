@@ -8,16 +8,6 @@ import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import { useNear } from '../../../contexts/near'
 import { EventService } from '../../../services/Event'
-import {
-	IMG_BCA_URL,
-	IMG_BNI_URL,
-	IMG_MASTERCARD2_URL,
-	IMG_MASTERCARD_URL,
-	IMG_PAYPAL2_URL,
-	IMG_PAYPAL_URL,
-	IMG_VISA2_URL,
-	IMG_VISA_URL,
-} from '../../../constants/url'
 import IconCalendar from '../../icons/IconCalendar'
 import moment from 'moment'
 import IconPrice from '../../icons/IconPrice'
@@ -90,7 +80,7 @@ const EventItem = (props: EventItemProps) => {
 
 	return (
 		<div className="rounded-xl shadow-xl bg-white flex w-11/12 md:w-10/12 lg:w-9/12 mx-auto md:mx-0">
-			<LeftSide />
+			<LeftSide data={props.data} />
 			<div className="flex flex-wrap flex-1 p-6 space-x-0 md:space-x-6 space-y-4 md:space-y-0 z-0">
 				<div className="w-full md:w-4/12">
 					<NFTImage data={props.data} image={props.data.nft_image} />
