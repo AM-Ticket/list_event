@@ -102,12 +102,23 @@ const EventItem = (props: EventItemProps) => {
 							<div className="rounded-xl p-2 bg-base flex items-center shadow-xl mb-4">
 								<IconPrice size={25} color="#FF731C" className="mx-1" />
 								<p className="font-semibold flex items-center text-sm">
-									{props.data.minting_price}
-									<IconNear size={14} color="#393939" className="mb-[1px]" />
-									{` `}~ $
-									{(
-										nearUsdPrice * ((props.data?.minting_price as number) || 0)
-									).toFixed(2)}
+									{props.data.minting_price === 0 ? (
+										'Free'
+									) : (
+										<>
+											{props.data.minting_price}
+											<IconNear
+												size={14}
+												color="#393939"
+												className="mb-[1px]"
+											/>
+											{` `}~ $
+											{(
+												nearUsdPrice *
+												((props.data?.minting_price as number) || 0)
+											).toFixed(2)}
+										</>
+									)}
 								</p>
 							</div>
 						</div>
@@ -180,7 +191,7 @@ const EventItem = (props: EventItemProps) => {
 								size="lg"
 								color="primary"
 							>
-								Buy
+								{props?.data?.minting_price === 0 ? 'Claim' : 'Buy'}
 							</Button>
 						)}
 						<p

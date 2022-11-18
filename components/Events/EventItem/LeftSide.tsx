@@ -13,9 +13,6 @@ const LeftSide = ({ data }: { data: IFormSchema }) => {
 				onClose={() => setShareModal(false)}
 				data={data}
 			/>
-			<div className="w-8 h-8 rounded-full bg-neutral-60 bg-opacity-70 hover:bg-opacity-50 transition cursor-pointer flex items-center justify-center">
-				<IconLike size={16} color="#FF731C" />
-			</div>
 			<div
 				className="w-8 h-8 rounded-full bg-neutral-60 bg-opacity-70 hover:bg-opacity-50 transition cursor-pointer flex items-center justify-center"
 				onClick={() => setShareModal(true)}

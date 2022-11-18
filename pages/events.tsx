@@ -60,18 +60,6 @@ const events = () => {
 		}
 	)
 
-	// useEffect(() => {
-	// 	setIsLoading(true)
-	// 	async function fetcher() {
-	// 		const res = await axios.get(
-	// 			`${process.env.NEXT_PUBLIC_API_URL}/api/events`
-	// 		)
-	// 		setData(res.data.data)
-	// 		setIsLoading(false)
-	// 	}
-	// 	if (!isRendering) fetcher()
-	// }, [isRendering])
-
 	useEffect(() => {
 		setTimeout(() => {
 			setIsRendering(false)

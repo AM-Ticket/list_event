@@ -99,7 +99,6 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 						<span className="mx-1 text-primary">{data?.organizer_name}</span>
 					</p>
 					<div className="flex items-center space-x-2">
-						<IconLike size={20} color="#FF731C" />
 						<div className="cursor-pointer" onClick={() => setShareModal(true)}>
 							<IconShare size={20} color="#FF731C" />
 						</div>
@@ -183,7 +182,7 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 							onClickHandler={() => setShowBuyModal(true)}
 							isFullWidth
 						>
-							Buy
+							{data?.minting_price === 0 ? 'Claim' : 'Buy'}
 						</Button>
 						<Button
 							color="black"
