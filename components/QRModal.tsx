@@ -31,7 +31,7 @@ const QRModal = (props: QRModalProps) => {
 			})
 		},
 		{
-			refreshInterval: 1000,
+			refreshInterval: 500,
 			onSuccess: async (data) => {
 				console.log(data)
 				if (data.status === 'open') {
