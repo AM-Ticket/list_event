@@ -17,7 +17,7 @@ export default async function events(
 				contract_id: req.query.contract_id,
 			}).exec()
 			if (!data) {
-				res.status(404).json({
+				res.status(200).json({
 					status: 404,
 				})
 			} else {
