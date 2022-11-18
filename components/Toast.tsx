@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 
 interface ToastProps {
-	type: 'success' | 'error'
+	type: 'success' | 'error' | 'info'
 	text: string
 	show: boolean
 }
@@ -16,7 +16,9 @@ const Toast = (props: ToastProps) => {
 					props.type === 'success' &&
 						`bg-green-200 text-green-600 border-2 border-green-700`,
 					props.type === 'error' &&
-						`bg-red-200 text-red-600 border-2 border-red-700`
+						`bg-red-200 text-red-600 border-2 border-red-700`,
+					props.type === 'info' &&
+						`bg-gray-200 text-gray-600 border-2 border-gray-700`
 				)}
 			>
 				<p>{props.text}</p>

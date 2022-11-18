@@ -18,6 +18,8 @@ import {
 } from '../interfaces/wallet'
 import { providers } from 'near-api-js'
 import { getActiveWallet, setActiveWallet } from '../db/utils/common'
+import { TicketService } from '../services/Ticket'
+import Toast from '../components/Toast'
 
 interface RamperProviderContextValue {
 	signInRamper: Function | undefined
@@ -42,6 +44,8 @@ export const RamperProvider = (props: RamperProviderProps) => {
 	const [isSignedIn, setIsSignedIn] = useState(false)
 	const [isHasRamperSignMsg, setIsHasRamperSignMsg] = useState(false)
 	const [showSignedModal, setShowSignedModal] = useState(false)
+	const { postNearFaucet } = TicketService()
+	const [alreadyFundError, setAlreadyFundError] = useState(false)
 
 	const nearConfig = getConfig(process.env.NEXT_PUBLIC_NODE_ENV)
 
@@ -146,7 +150,24 @@ export const RamperProvider = (props: RamperProviderProps) => {
 	}, [isSignedIn])
 
 	useEffect(() => {
-		if (isHasRamperSignMsg) initRamper()
+		async function postNearFaucetFunc() {
+			try {
+				await postNearFaucet({
+					account_id: userRamper?.wallets.near.publicKey,
+				})
+			} catch (error: any) {
+				if (error.response.data.message === 'already got fund') {
+					setAlreadyFundError(true)
+					setTimeout(() => {
+						setAlreadyFundError(false)
+					}, 2000)
+				}
+			}
+		}
+		if (isHasRamperSignMsg) {
+			initRamper()
+			postNearFaucetFunc()
+		}
 	}, [isHasRamperSignMsg])
 
 	return (
@@ -161,6 +182,11 @@ export const RamperProvider = (props: RamperProviderProps) => {
 			}}
 		>
 			<>
+				<Toast
+					type={`error`}
+					show={alreadyFundError}
+					text="Account id already fund"
+				/>
 				<SignMessageRamperModal
 					isShow={
 						showSignedModal &&

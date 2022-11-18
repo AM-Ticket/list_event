@@ -39,15 +39,12 @@ export default async function nearFaucet(
 			}).exec()
 
 			if (account) {
-				res.status(500).json({
-					status: 0,
-					message: `Account ${accountId} already got fund`,
-				})
+				throw new Error('already got fund')
 			}
 
 			await faucetAccount.sendMoney(
 				accountId,
-				new BN('100000000000000000000000')
+				new BN('500000000000000000000000')
 			)
 
 			await NearFaucetModal.findOneAndUpdate(

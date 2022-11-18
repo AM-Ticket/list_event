@@ -7,7 +7,11 @@ import { RamperProvider } from '../contexts/RamperProvider'
 import axios from 'axios'
 import useBaseStore from '../stores/baseStore'
 import { useNear } from '../contexts/near'
-import { removeActiveWallet, setActiveWallet } from '../db/utils/common'
+import {
+	getActiveWallet,
+	removeActiveWallet,
+	setActiveWallet,
+} from '../db/utils/common'
 
 export default function App({ Component, pageProps }: AppProps) {
 	const { setNearUsdPrice } = useBaseStore()
@@ -28,13 +32,9 @@ export default function App({ Component, pageProps }: AppProps) {
 		}
 		getNearUsdPrice()
 		if (wallet?.isSignedIn()) setActiveWallet('near-wallet')
-		else removeActiveWallet()
+		else if (getActiveWallet() === 'near-wallet') removeActiveWallet()
 	}, [wallet])
 
-	// useEffect(() => {
-	// 	if (!wallet) removeActiveWallet()
-	// 	else setActiveWallet('near-wallet')
-	// }, [])
 	return (
 		<>
 			<RamperProvider>
