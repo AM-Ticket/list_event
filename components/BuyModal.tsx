@@ -13,11 +13,13 @@ import { IFormSchema } from '../interfaces/api/schema'
 import BN from 'bn.js'
 import { useRamperProvider } from '../contexts/RamperProvider'
 import { getActiveWallet } from '../db/utils/common'
+import { Dispatch, SetStateAction } from 'react'
 
 interface BuyModalProps {
 	isShow: boolean
 	onClose: () => void
 	data?: IFormSchema
+	setShowLoginModal: Dispatch<SetStateAction<boolean>>
 }
 
 const BuyModal = (props: BuyModalProps) => {
@@ -85,8 +87,12 @@ const BuyModal = (props: BuyModalProps) => {
 								`absolute top-12 -ml-3 flex flex-col items-center underline hover:text-opacity-60`,
 								accountId ? `pointer-events-none` : `cursor-pointer`
 							)}
-							onClick={() =>
-								router.push('https://wallet.testnet.near.org/create')
+							onClick={
+								() => {
+									props.setShowLoginModal(true)
+									props.onClose()
+								}
+								// router.push('https://wallet.testnet.near.org/create')
 							}
 						>
 							<p className={clsx(`font-semibold`)}>Connect wallet</p>

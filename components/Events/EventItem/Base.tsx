@@ -20,6 +20,7 @@ import useBaseStore from '../../../stores/baseStore'
 import IconEO from '../../icons/IconEO'
 import Tippy from '@tippyjs/react'
 import IconInfo from '../../icons/IconInfo'
+import LoginModal from '../../LoginModal'
 
 interface EventItemProps {
 	data: IFormSchema
@@ -31,6 +32,7 @@ const EventItem = (props: EventItemProps) => {
 	const { nearUsdPrice } = useBaseStore()
 	const { userRamper } = useRamperProvider()
 	const accountId = wallet?.getAccountId() || userRamper?.wallets.near.publicKey
+	const [showLoginModal, setShowLoginModal] = useState(false)
 	const router = useRouter()
 	const {
 		getIsOwnedEventTicketByUser,
@@ -138,7 +140,8 @@ const EventItem = (props: EventItemProps) => {
 								<p className="text-xs font-semibold">
 									{parseInt(props.data?.num_of_guests as string) -
 										Number(totalSupply)}
-									/{props.data?.num_of_guests} tickets
+									/{props.data?.num_of_guests}{' '}
+									<span className="hidden lg:inline">tickets</span>
 								</p>
 							</div>
 							<div className="flex flex-col items-center space-y-2">
@@ -207,6 +210,11 @@ const EventItem = (props: EventItemProps) => {
 				data={props.data}
 				isShow={showBuyModal}
 				onClose={() => setShowBuyModal(false)}
+				setShowLoginModal={setShowLoginModal}
+			/>
+			<LoginModal
+				isShow={showLoginModal}
+				onClose={() => setShowLoginModal(false)}
 			/>
 		</div>
 	)
