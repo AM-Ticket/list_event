@@ -37,7 +37,7 @@ const BuyModal = (props: BuyModalProps) => {
 						utils.format.parseNearAmount(
 							props.data?.minting_price?.toString()
 						) as string
-					),
+					).add(new BN('10000000000000000000000')),
 					gas: new BN(200000000000000),
 			  })
 			: await signAndSendTransactions({
@@ -51,7 +51,7 @@ const BuyModal = (props: BuyModalProps) => {
 								utils.format.parseNearAmount(
 									props.data?.minting_price?.toString()
 								) as string
-							)
+							).add(new BN('10000000000000000000000'))
 						),
 					],
 			  })

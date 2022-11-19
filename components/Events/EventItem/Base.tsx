@@ -138,8 +138,12 @@ const EventItem = (props: EventItemProps) => {
 									<IconTicket size={25} color="#FF731C" />
 								</div>
 								<p className="text-xs font-semibold">
-									{parseInt(props.data?.num_of_guests as string) -
-										Number(totalSupply)}
+									{Math.min(
+										parseInt(props.data?.num_of_guests as string) +
+											parseInt((props.data?.test_tickets as string) || '0') -
+											Number(totalSupply),
+										parseInt(props.data?.num_of_guests as string)
+									)}
 									/{props.data?.num_of_guests}{' '}
 									<span className="hidden lg:inline">tickets</span>
 								</p>
