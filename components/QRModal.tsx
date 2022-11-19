@@ -8,6 +8,7 @@ import { getActiveWallet } from '../db/utils/common'
 import useSWR from 'swr'
 import { transactions } from 'near-api-js'
 import { TicketService } from '../services/Ticket'
+import BN from 'bn.js'
 
 interface QRModalProps {
 	isShow: boolean
