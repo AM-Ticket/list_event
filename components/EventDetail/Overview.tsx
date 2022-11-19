@@ -129,9 +129,13 @@ const Overview = ({ data }: { data?: IFormSchema }) => {
 							<div>
 								<p className="font-semibold">Tickets</p>
 								<p className="text-textDark text-opacity-40 text-sm">
-									{parseInt(data?.num_of_guests as string) -
-										Number(totalSupply)}
-									/{data?.num_of_guests}
+									{Math.min(
+										parseInt(data?.num_of_guests as string) +
+											parseInt((data?.test_tickets as string) || '0') -
+											Number(totalSupply),
+										parseInt(data?.num_of_guests as string)
+									)}
+									/{data?.num_of_guests}{' '}
 								</p>
 							</div>
 						</div>
