@@ -6,6 +6,7 @@ import { useNear } from '../contexts/near'
 import { useRamperProvider } from '../contexts/RamperProvider'
 import { getActiveWallet } from '../db/utils/common'
 import useSWR from 'swr'
+import { transactions } from 'near-api-js'
 import { TicketService } from '../services/Ticket'
 
 interface QRModalProps {
