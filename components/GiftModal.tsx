@@ -101,7 +101,7 @@ const GiftModal = (props: BuyModalProps) => {
 							<div className="flex flex-col items-center">
 								<Input
 									onChangeHandler={(e) => setReceiverId(e.target.value)}
-									placeholder={'NEAR Wallet Address'}
+									placeholder={'wallet address'}
 								></Input>
 								<Button
 									size="base"

@@ -74,7 +74,7 @@ const TransferModal = (props: BuyModalProps) => {
 							<div className="flex flex-wrap justify-center">
 								<Input
 									onChangeHandler={(e) => setNearWalletAddress(e.target.value)}
-									placeholder={'NEAR Wallet Address'}
+									placeholder={'wallet address'}
 								></Input>
 								<div className="flex justify-center">
 									<Button
