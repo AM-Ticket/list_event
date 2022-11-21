@@ -7,6 +7,8 @@ import bs58 from 'bs58'
 import sha256 from 'js-sha256'
 import axios from 'axios'
 import nacl from 'tweetnacl'
+import { providers } from 'near-api-js'
+import { AccountView } from 'near-api-js/lib/providers/provider'
 
 const nearConfig = getConfig(process.env.NEXT_PUBLIC_NODE_ENV)
 
@@ -16,6 +18,19 @@ export function useNear() {
 	const [signIn, setSignIn] = useState<Function>()
 	const [generateAuthToken, setGenerateAuthToken] = useState<Function>()
 	const [authToken, setAuthToken] = useState<String>()
+	const [accountBalance, setAccountBalance] = useState('1')
+
+	const getAccountBalance = async (accountId: string) => {
+		const provider = new providers.JsonRpcProvider({
+			url: nearConfig.nodeUrl,
+		})
+		const state: AccountView = await provider.query({
+			request_type: 'view_account',
+			account_id: accountId,
+			finality: 'final',
+		})
+		setAccountBalance(state.amount)
+	}
 
 	useEffect(() => {
 		const near = new nearAPI.Near({
@@ -23,6 +38,7 @@ export function useNear() {
 			keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
 		})
 		const wallet = new nearAPI.WalletConnection(near, null)
+		if (wallet.isSignedIn()) getAccountBalance(wallet.getAccountId())
 		function signIn() {
 			wallet.requestSignIn({ contractId: nearConfig.contractName })
 			localStorage.setItem('ACTIVE_WALLET', 'near-wallet')
@@ -55,7 +71,7 @@ export function useNear() {
 		setGenerateAuthToken(() => generateAuthToken)
 	}, [])
 
-	return { near, wallet, signIn, authToken, generateAuthToken }
+	return { near, wallet, signIn, authToken, generateAuthToken, accountBalance }
 }
 
 const _hexToArr = (str) => {
