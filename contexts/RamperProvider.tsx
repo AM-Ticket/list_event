@@ -75,10 +75,13 @@ export const RamperProvider = (props: RamperProviderProps) => {
 	}
 
 	const signInUserRamper = async () => {
-		await signIn()
-		setActiveWallet('ramper')
-		setUserRamper(getUser())
-		setIsSignedIn(true)
+		const res = await signIn()
+		if (res.method === 'cancel') return
+		else {
+			setActiveWallet('ramper')
+			setUserRamper(getUser())
+			setIsSignedIn(true)
+		}
 	}
 
 	const signOutUserRamper = () => {

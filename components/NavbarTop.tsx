@@ -23,6 +23,8 @@ import {
 } from '../db/utils/common'
 import { useRamperProvider } from '../contexts/RamperProvider'
 import { openWallet } from '@ramper/near'
+import { formatNearAmount } from 'near-api-js/lib/utils/format'
+import IconNear from './icons/IconNear'
 
 const NavbarTop = ({
 	setSearchData,
@@ -31,7 +33,7 @@ const NavbarTop = ({
 	setSearchData?: Dispatch<SetStateAction<string>>
 	onKeyPress?: KeyboardEventHandler<HTMLInputElement>
 }) => {
-	const { wallet } = useNear()
+	const { wallet, accountBalance } = useNear()
 	const { userRamper, signOutRamper } = useRamperProvider()
 	const accountId =
 		wallet?.getAccountId() || userRamper?.wallets?.near.publicKey || null
@@ -83,6 +85,11 @@ const NavbarTop = ({
 						</div>
 						{showMenu && (
 							<div className="absolute top-14 right-0 rounded-xl bg-white shadow-xl flex flex-col space-y-4 min-w-[208px] p-6 z-40">
+								<p className="flex items-center text-black font-semibold justify-center">
+									Your Balance:{' '}
+									{Number(formatNearAmount(accountBalance)).toFixed(2)}
+									<IconNear size={15} color="black" className="-mt-1" />
+								</p>
 								<Button
 									onClickHandler={() => {
 										router.push('/verify-qr')
